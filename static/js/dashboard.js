@@ -53,6 +53,7 @@ class Dashboard {
             if (data.total_queries !== undefined) {
                 this.updateElement('queriesCount', data.total_queries);
                 this.updateElement('queriesToday', `${data.today_queries} today`);
+                this.updateElement('chatQueriesMetric', data.total_queries);
             }
 
             if (data.last_activity) {
