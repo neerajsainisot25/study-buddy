@@ -5,8 +5,25 @@ class Profile {
     }
 
     init() {
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            this.showLoginPrompt();
+            return;
+        }
         this.loadProfile();
         this.setupEventListeners();
+    }
+
+    showLoginPrompt() {
+        const profileContainer = document.getElementById('profileContainer');
+        if (profileContainer) {
+            profileContainer.innerHTML = `
+                <div class="section-card" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="color: var(--text); margin-bottom: 20px;">Profile</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to view and edit your profile</p>
+                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
+                </div>
+            `;
+        }
     }
 
     setupEventListeners() {
@@ -19,18 +36,25 @@ class Profile {
     }
 
     async loadProfile() {
-        // Load profile data from API
         try {
-            // For now, use default data
+            const response = await window.authManager.apiCall('/api/auth/profile');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showAuthModal();
+                }
+                return;
+            }
+            const data = await response.json();
+            
             this.userData = {
-                name: 'Alex Johnson',
-                email: 'alex.johnson@example.com',
-                grade: '11th Grade',
-                goal: 20,
-                bio: 'Passionate about learning and achieving academic excellence.',
-                daysActive: 45,
-                totalQuizzes: 24,
-                studyHours: 42
+                name: data.full_name || data.email,
+                email: data.email,
+                grade: data.grade || 'Not Set',
+                goal: data.weekly_goal || 20,
+                bio: data.bio || 'No bio yet',
+                daysActive: data.days_active || 0,
+                totalQuizzes: data.total_quizzes || 0,
+                studyHours: data.study_hours || 0
             };
             
             this.updateUI();
@@ -64,15 +88,28 @@ class Profile {
 
     async saveProfile() {
         const name = document.getElementById('profileName')?.value;
-        const email = document.getElementById('profileEmail')?.value;
         const grade = document.getElementById('profileGrade')?.value;
         const goal = document.getElementById('profileGoal')?.value;
         const bio = document.getElementById('profileBio')?.value;
 
         try {
-            // Save to API
-            console.log('Saving profile:', { name, email, grade, goal, bio });
-            alert('Profile saved successfully!');
+            const response = await window.authManager.apiCall('/api/auth/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    full_name: name,
+                    grade: grade,
+                    weekly_goal: parseInt(goal),
+                    bio: bio
+                })
+            });
+
+            if (response.ok) {
+                alert('Profile saved successfully!');
+                this.loadProfile();
+            } else {
+                alert('Error saving profile');
+            }
         } catch (error) {
             console.error('Error saving profile:', error);
             alert('Error saving profile');
@@ -97,9 +134,16 @@ class Profile {
         }
 
         try {
-            // Call delete API
-            console.log('Deleting account...');
-            alert('Account deletion requested. You will be logged out.');
+            const response = await window.authManager.apiCall('/api/auth/profile', {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Account deleted successfully. You will be logged out.');
+                window.authManager.logout();
+            } else {
+                alert('Error deleting account');
+            }
         } catch (error) {
             console.error('Error deleting account:', error);
             alert('Error deleting account');

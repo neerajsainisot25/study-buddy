@@ -5,8 +5,25 @@ class Dashboard {
     }
 
     async init() {
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            this.showLoginPrompt();
+            return;
+        }
         await this.loadStats();
         this.updateKBDocCount();
+    }
+
+    showLoginPrompt() {
+        const dashboardContainer = document.getElementById('dashboardContainer');
+        if (dashboardContainer) {
+            dashboardContainer.innerHTML = `
+                <div class="section-card" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="color: var(--text); margin-bottom: 20px;">Welcome to StudyMate</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to access your academic dashboard</p>
+                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
+                </div>
+            `;
+        }
     }
 
     async loadStats() {
@@ -20,6 +37,9 @@ class Dashboard {
             ]);
         } catch (error) {
             console.error('Error loading dashboard stats:', error);
+            if (error.message === 'Unauthorized') {
+                showAuthModal();
+            }
         }
     }
 
@@ -47,7 +67,11 @@ class Dashboard {
 
     async loadAnalytics() {
         try {
-            const response = await fetch('/api/chat/analytics');
+            const response = await window.authManager.apiCall('/api/chat/analytics');
+            if (!response.ok) {
+                if (response.status === 401) throw new Error('Unauthorized');
+                return;
+            }
             const data = await response.json();
             
             if (data.total_queries !== undefined) {
@@ -66,7 +90,11 @@ class Dashboard {
 
     async loadEvents() {
         try {
-            const response = await fetch('/api/calendar/upcoming');
+            const response = await window.authManager.apiCall('/api/calendar/upcoming');
+            if (!response.ok) {
+                if (response.status === 401) throw new Error('Unauthorized');
+                return;
+            }
             const data = await response.json();
             
             if (data.count !== undefined) {
@@ -81,7 +109,11 @@ class Dashboard {
 
     async loadQuizHistory() {
         try {
-            const response = await fetch('/api/quiz/history');
+            const response = await window.authManager.apiCall('/api/quiz/history');
+            if (!response.ok) {
+                if (response.status === 401) throw new Error('Unauthorized');
+                return;
+            }
             const data = await response.json();
             
             if (data.total_attempts !== undefined) {
@@ -102,7 +134,11 @@ class Dashboard {
 
     async loadDashboardAnalytics() {
         try {
-            const response = await fetch('/api/analytics/dashboard');
+            const response = await window.authManager.apiCall('/api/analytics/dashboard');
+            if (!response.ok) {
+                if (response.status === 401) throw new Error('Unauthorized');
+                return;
+            }
             const data = await response.json();
             
             if (data.trends?.daily) {
@@ -143,33 +179,36 @@ class Dashboard {
         container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 40px;">Chart rendering...</div>';
     }
 
-    updateUpcomingEvents(recentActivity) {
+    async updateUpcomingEvents(recentActivity) {
         const container = document.getElementById('upcomingEventsList');
         if (!container) return;
 
-        fetch('/api/calendar/upcoming')
-            .then(response => response.json())
-            .then(data => {
-                if (data.events && data.events.length > 0) {
-                    let html = '';
-                    data.events.slice(0, 2).forEach(event => {
-                        html += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);">
-                                <div>
-                                    <div style="font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px;">
-                                        • ${this.escapeHtml(event.title)}
-                                    </div>
-                                    <div style="font-size: 12px; color: var(--text-secondary);">${event.time || 'All day'}</div>
+        try {
+            const response = await window.authManager.apiCall('/api/calendar/upcoming');
+            if (!response.ok) return;
+            const data = await response.json();
+            
+            if (data.events && data.events.length > 0) {
+                let html = '';
+                data.events.slice(0, 2).forEach(event => {
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                            <div>
+                                <div style="font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px;">
+                                    • ${this.escapeHtml(event.title)}
                                 </div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">${event.time || 'All day'}</div>
                             </div>
-                        `;
-                    });
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No upcoming events</div>';
-                }
-            })
-            .catch(error => console.error('Error loading events:', error));
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No upcoming events</div>';
+            }
+        } catch (error) {
+            console.error('Error loading events:', error);
+        }
     }
 
     // Utility methods

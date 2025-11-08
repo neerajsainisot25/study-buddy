@@ -21,6 +21,11 @@ class Quiz {
     }
 
     init() {
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            this.showLoginPrompt();
+            return;
+        }
+        
         this.setupSection = document.getElementById('quizSetup');
         this.loadingSection = document.getElementById('quizLoading');
         this.previewSection = document.getElementById('quizPreview');
@@ -29,6 +34,19 @@ class Quiz {
         
         this.showSetup();
         this.loadHistory();
+    }
+
+    showLoginPrompt() {
+        const quizContainer = document.getElementById('quizContainer');
+        if (quizContainer) {
+            quizContainer.innerHTML = `
+                <div class="section-card" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="color: var(--text); margin-bottom: 20px;">Quiz Generator</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to generate and take quizzes</p>
+                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
+                </div>
+            `;
+        }
     }
 
     async generate() {
@@ -59,7 +77,7 @@ class Quiz {
         this.showLoading();
 
         try {
-            const response = await fetch('/api/quiz/generate', {
+            const response = await window.authManager.apiCall('/api/quiz/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -82,6 +100,9 @@ class Quiz {
                 this.userAnswers = new Array(this.currentQuestions.length).fill(null);
                 this.currentQuestionIndex = 0;
                 this.showPreview();
+            } else if (response.status === 401) {
+                showAuthModal();
+                this.showSetup();
             } else {
                 alert('Error: ' + (data.error || 'Failed to generate quiz'));
                 this.showSetup();
@@ -327,7 +348,7 @@ class Quiz {
         const timeTaken = this.getTimeTaken();
 
         try {
-            const response = await fetch('/api/quiz/submit', {
+            const response = await window.authManager.apiCall('/api/quiz/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -452,12 +473,15 @@ class Quiz {
 
     async loadHistory() {
         try {
-            const response = await fetch('/api/quiz/history');
-            const data = await response.json();
-
-            if (response.ok) {
-                this.displayHistory(data);
+            const response = await window.authManager.apiCall('/api/quiz/history');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showAuthModal();
+                }
+                return;
             }
+            const data = await response.json();
+            this.displayHistory(data);
         } catch (error) {
             console.error('Error loading quiz history:', error);
         }

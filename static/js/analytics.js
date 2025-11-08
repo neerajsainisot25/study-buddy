@@ -11,9 +11,26 @@ class Analytics {
     }
 
     init() {
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            this.showLoginPrompt();
+            return;
+        }
         this.isActive = true;
         this.loadAnalytics();
         this.startAutoUpdate();
+    }
+
+    showLoginPrompt() {
+        const analyticsContainer = document.getElementById('analyticsContainer');
+        if (analyticsContainer) {
+            analyticsContainer.innerHTML = `
+                <div class="section-card" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="color: var(--text); margin-bottom: 20px;">Analytics</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to view your performance analytics</p>
+                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
+                </div>
+            `;
+        }
     }
 
     stop() {
@@ -38,19 +55,21 @@ class Analytics {
 
     async loadAnalytics() {
         try {
-            const response = await fetch('/api/analytics/dashboard');
+            const response = await window.authManager.apiCall('/api/analytics/dashboard');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showAuthModal();
+                }
+                return;
+            }
             const data = await response.json();
 
-            if (response.ok) {
-                this.updateOverview(data);
-                this.updateCharts(data);
-                this.updateRecentActivity(data);
-                this.updateLastUpdated();
-            } else {
-                console.error('Error loading analytics:', data.error);
-            }
+            this.updateOverview(data);
+            this.updateCharts(data);
+            this.updateRecentActivity(data);
+            this.updateLastUpdated();
         } catch (error) {
-            console.error('Error fetching analytics:', error);
+            console.error('Error loading analytics:', error);
         }
     }
 

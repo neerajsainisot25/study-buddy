@@ -7,11 +7,32 @@ class Calendar {
     }
 
     init() {
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            this.showLoginPrompt();
+            return;
+        }
         this.renderCalendar();
         this.loadEvents();
         this.setDefaultDate();
         this.updateTodayDate();
         this.loadTodayEvents();
+    }
+
+    loadCalendar() {
+        this.init();
+    }
+
+    showLoginPrompt() {
+        const calendarContainer = document.getElementById('calendarContainer');
+        if (calendarContainer) {
+            calendarContainer.innerHTML = `
+                <div class="section-card" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="color: var(--text); margin-bottom: 20px;">Calendar</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to view and manage your events</p>
+                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
+                </div>
+            `;
+        }
     }
 
     updateTodayDate() {
@@ -31,7 +52,7 @@ class Calendar {
 
         try {
             const today = new Date().toISOString().split('T')[0];
-            const response = await fetch(`/api/calendar/events?date=${today}`);
+            const response = await window.authManager.apiCall(`/api/calendar/events?date=${today}`);
             
             if (response.ok) {
                 const data = await response.json();
@@ -65,6 +86,8 @@ class Calendar {
                 });
                 
                 container.innerHTML = html;
+            } else if (response.status === 401) {
+                showAuthModal();
             }
         } catch (error) {
             console.error('Error loading today events:', error);
@@ -144,7 +167,6 @@ class Calendar {
 
     async loadEvents() {
         try {
-            // Load events for the current month
             const year = this.currentDate.getFullYear();
             const month = this.currentDate.getMonth();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -155,12 +177,15 @@ class Calendar {
                 const date = new Date(year, month, day);
                 const dateStr = date.toISOString().split('T')[0];
                 
-                const response = await fetch(`/api/calendar/events?date=${dateStr}`);
+                const response = await window.authManager.apiCall(`/api/calendar/events?date=${dateStr}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.events && data.events.length > 0) {
                         this.events[dateStr] = data.events;
                     }
+                } else if (response.status === 401) {
+                    showAuthModal();
+                    break;
                 }
             }
             
@@ -177,12 +202,11 @@ class Calendar {
         if (!container) return;
 
         try {
-            const response = await fetch('/api/calendar/upcoming');
+            const response = await window.authManager.apiCall('/api/calendar/upcoming');
             if (response.ok) {
                 const data = await response.json();
                 const events = data.events || [];
                 
-                // Filter out today's events
                 const today = new Date().toISOString().split('T')[0];
                 const upcomingEvents = events.filter(e => e.date !== today);
                 
