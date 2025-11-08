@@ -10,7 +10,7 @@ def create_app(config_class=Config):
                 static_url_path='/static',
                 template_folder='../templates')
     app.config.from_object(config_class)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     # Initialize extensions
     supabase.init_app(app)
