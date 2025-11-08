@@ -9,7 +9,7 @@ class Config:
     # API Configuration
     API_KEY = os.getenv('OPENROUTER_API_KEY', '')
     API_URL = os.getenv('LLM_URL', 'https://openrouter.ai/api/v1/chat/completions')
-    MODEL = 'openai/gpt-3.5-turbo'
+    MODEL = 'minimax/minimax-m2:free'  # Free model from OpenRouter
     
     # Supabase Configuration
     SUPABASE_URL = os.getenv('SUPABASE_URL')
@@ -20,7 +20,7 @@ class Config:
     EMBED_DIM = int(os.getenv('EMBED_DIM', 1536))
     
     # App Configuration
-    APP_NAME = 'Unified AI App'
+    APP_NAME = 'StudyMate - Academic Assistant'
     APP_URL = os.getenv('APP_URL', 'http://localhost:5000')
     DEBUG = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
     PORT = int(os.getenv('PORT', 5000))

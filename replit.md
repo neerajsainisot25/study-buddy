@@ -15,7 +15,7 @@ A modern, feature-rich academic assistant application with AI-powered features i
 - **Flask 3.0.0** - Python web framework
 - **LangChain** - AI/LLM integration framework
 - **LangGraph** - Advanced AI workflow orchestration
-- **OpenRouter API** - LLM provider (using GPT-3.5-turbo with Google Gemini Flash 1.5 fallback)
+- **OpenRouter API** - LLM provider (using FREE models: minimax-m2 with Google Gemini Flash 1.5 fallback)
 - **Supabase** (required) - Database and authentication backend
 - **BeautifulSoup4** - Web scraping
 - **DuckDuckGo Search** - Web search integration
@@ -69,7 +69,7 @@ The theme emphasizes clean lines, generous whitespace, and a calming yet stimula
 
 The application uses the following environment variables (configure via Replit Secrets):
 
-- `OPENROUTER_API_KEY` - **Required** - OpenRouter API key for AI chat and quiz generation (free fallback to Google Gemini Flash 1.5)
+- `OPENROUTER_API_KEY` - **Required** - OpenRouter API key for AI chat and quiz generation (uses FREE models: minimax-m2 and Google Gemini Flash 1.5)
 - `SUPABASE_URL` - **Required** - Supabase project URL for authentication and database
 - `SUPABASE_KEY` - **Required** - Supabase anonymous key for client-side auth
 - `SUPABASE_SERVICE_KEY` - **Required** - Supabase service role key for server-side operations
@@ -173,8 +173,9 @@ To deploy:
 - ✅ **Enhanced visibility** - Clear, readable logo in sidebar
 
 **OpenRouter Integration** (Nov 8, 2025)
-- ✅ **Free fallback model** - Automatic fallback to Google Gemini Flash 1.5 if primary model fails
-- ✅ **Robust error handling** - Graceful degradation ensures chat always works
+- ✅ **100% FREE models** - Uses minimax-m2:free as primary, Google Gemini Flash 1.5 as fallback
+- ✅ **No cost AI** - Chat and quiz generation completely free with OpenRouter
+- ✅ **Robust error handling** - Automatic fallback ensures chat always works
 - ✅ **Streaming support** - Real-time chat responses with SSE
 
 **Previous Changes**
@@ -202,9 +203,11 @@ To deploy:
      - Click "Run" to create all tables
 
 2. **Add OpenRouter API Key** (REQUIRED)
-   - Get free key from https://openrouter.ai/
+   - Get **FREE** key from https://openrouter.ai/
    - Add to Replit Secrets as `OPENROUTER_API_KEY`
-   - Free fallback to Google Gemini Flash 1.5 is automatic
+   - **Uses 100% FREE models** - No costs for chat or quiz generation!
+   - Primary: minimax/minimax-m2:free
+   - Fallback: google/gemini-flash-1.5 (also free)
 
 ### Optional Enhancements
 
