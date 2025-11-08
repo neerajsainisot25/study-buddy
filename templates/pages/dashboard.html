@@ -6,10 +6,31 @@
     </div>
 
     <!-- Progress Card -->
-    <div class="section-card" style="background: var(--gradient-subtle); border: 1px solid var(--border); margin-bottom: 32px;">
+    <div class="section-card" style="background: linear-gradient(135deg, rgba(158, 207, 212, 0.1) 0%, rgba(188, 227, 231, 0.1) 100%); border: 2px solid var(--primary); margin-bottom: 32px;">
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
             <div style="text-align: center;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                    <div style="font-size: 48px;">🔥</div>
+                    <div>
+                        <div style="font-size: 36px; font-weight: 700; color: var(--text); line-height: 1;" id="studyStreak">12</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">days streak</div>
+                    </div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Current Study Streak</div>
+            </div>
+            <div style="text-align: center; border-left: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0 24px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                    <div style="font-size: 48px;">🏆</div>
+                    <div>
+                        <div style="font-size: 36px; font-weight: 700; color: var(--text); line-height: 1;" id="personalBest">18</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">days</div>
+                    </div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Personal Best</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                    <div style="font-size: 48px;">📖</div>
                     <div>
                         <div style="font-size: 36px; font-weight: 700; color: var(--text); line-height: 1;" id="totalQuizzesMetric">0</div>
                         <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">quizzes</div>
@@ -17,35 +38,86 @@
                 </div>
                 <div style="font-size: 13px; color: var(--text-secondary);">Total Quizzes</div>
             </div>
-            <div style="text-align: center; border-left: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0 24px;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
-                    <div>
-                        <div style="font-size: 36px; font-weight: 700; color: var(--text); line-height: 1;" id="avgScoreMetric">0%</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">average</div>
-                    </div>
-                </div>
-                <div style="font-size: 13px; color: var(--text-secondary);">Average Score</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
-                    <div>
-                        <div style="font-size: 36px; font-weight: 700; color: var(--text); line-height: 1;" id="chatQueriesMetric">0</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">queries</div>
-                    </div>
-                </div>
-                <div style="font-size: 13px; color: var(--text-secondary);">Total Chat Queries</div>
-            </div>
         </div>
     </div>
 
-    <!-- Upcoming Events -->
-    <div class="section-card" style="margin-bottom: 32px;">
-        <div class="section-header">
-            <h3 class="section-title">Upcoming Events</h3>
-            <a href="#" onclick="switchPage('calendar', document.querySelector('.nav-item:nth-child(4)')); return false;" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">View All →</a>
+    <!-- Key Metrics Grid -->
+    <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 32px;">
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(158, 207, 212, 0.15);">📈</div>
+            <div class="metric-value" id="avgScoreMetric">0%</div>
+            <div class="metric-label">Avg Score</div>
+            <div style="width: 100%; height: 8px; background: var(--bg-secondary); border-radius: 4px; margin-top: 12px; overflow: hidden;">
+                <div id="avgScoreBar" style="height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%); width: 0%; transition: width 0.5s ease;"></div>
+            </div>
         </div>
-        <div id="upcomingEventsList">
-            <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Loading events...</div>
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(255, 138, 101, 0.15);">⏰</div>
+            <div class="metric-value" id="studyHours">0</div>
+            <div class="metric-label">Study Hours</div>
+            <div style="width: 100%; height: 8px; background: var(--bg-secondary); border-radius: 4px; margin-top: 12px; overflow: hidden;">
+                <div id="studyHoursBar" style="height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%); width: 0%; transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(46, 204, 113, 0.15);">👤</div>
+            <div class="metric-value" id="currentStreak">12</div>
+            <div class="metric-label">Current Streak</div>
+        </div>
+    </div>
+
+    <!-- Study Streak and Upcoming Events -->
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 32px;">
+        <!-- Study Streak -->
+        <div class="section-card" style="background: linear-gradient(135deg, rgba(158, 207, 212, 0.05) 0%, rgba(158, 207, 212, 0.1) 100%);">
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 48px; margin-bottom: 12px;">🔥</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">Study Streak</div>
+                <div style="font-size: 36px; font-weight: 700; color: var(--text);" id="studyStreakDays">7 days</div>
+            </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Upcoming Events</h3>
+                <a href="#" onclick="switchPage('calendar', document.querySelector('.nav-item:nth-child(4)')); return false;" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">View All →</a>
+            </div>
+            <div id="upcomingEventsList">
+                <div style="padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="background: var(--primary); color: var(--dark); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 500;">Mathematics</span>
+                                <span style="font-size: 12px; color: var(--text-secondary);">⏰ 11:50 PM</span>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Math Quiz Deadline</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Saturday, November 15, 2025</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-ghost btn-small" style="padding: 6px;">✏️</button>
+                            <button class="btn btn-ghost btn-small" style="padding: 6px;">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 12px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="background: var(--accent); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 500;">Physics</span>
+                                <span style="font-size: 12px; color: var(--text-secondary);">⏰ 3:00 PM - 5:00 PM</span>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Physics Study Session</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Sunday, November 16, 2025</div>
+                            <div style="font-size: 11px; color: var(--text-light); margin-top: 2px;">Chapter 7: Thermodynamics</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-ghost btn-small" style="padding: 6px;">✏️</button>
+                            <button class="btn btn-ghost btn-small" style="padding: 6px;">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -58,7 +130,33 @@
                 <a href="#" onclick="switchPage('analytics', document.querySelector('.nav-item:nth-child(5)')); return false;" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">View Details →</a>
             </div>
             <div id="quizPerformanceList">
-                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Complete quizzes to see performance data</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div style="font-size: 14px; font-weight: 500; color: var(--text);">Mathematics</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="flex: 1; height: 8px; background: var(--bg-secondary); border-radius: 4px; width: 120px; overflow: hidden;">
+                            <div style="height: 100%; background: var(--primary); width: 92%; transition: width 0.5s ease;"></div>
+                        </div>
+                        <span style="font-size: 14px; font-weight: 600; color: var(--text); min-width: 40px; text-align: right;">92%</span>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div style="font-size: 14px; font-weight: 500; color: var(--text);">Science</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="flex: 1; height: 8px; background: var(--bg-secondary); border-radius: 4px; width: 120px; overflow: hidden;">
+                            <div style="height: 100%; background: var(--accent); width: 85%; transition: width 0.5s ease;"></div>
+                        </div>
+                        <span style="font-size: 14px; font-weight: 600; color: var(--text); min-width: 40px; text-align: right;">85%</span>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                    <div style="font-size: 14px; font-weight: 500; color: var(--text);">History</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="flex: 1; height: 8px; background: var(--bg-secondary); border-radius: 4px; width: 120px; overflow: hidden;">
+                            <div style="height: 100%; background: var(--success); width: 78%; transition: width 0.5s ease;"></div>
+                        </div>
+                        <span style="font-size: 14px; font-weight: 600; color: var(--text); min-width: 40px; text-align: right;">78%</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -69,9 +167,42 @@
                 <a href="#" onclick="switchPage('chat', document.querySelector('.nav-item:nth-child(2)')); return false;" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">View All →</a>
             </div>
             <div id="recentChatsList">
-                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Start chatting to see recent conversations</div>
+                <div style="padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div style="font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px;">Can you explain photosynthesis?</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Photosynthesis is the process by which plants convert light energy...</div>
+                    <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">2 hours ago</div>
+                </div>
+                <div style="padding: 12px 0;">
+                    <div style="font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px;">What is the Pythagorean theorem?</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">The Pythagorean theorem states that in a right triangle, a² + b² = c²...</div>
+                    <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">5 hours ago</div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Quick Actions -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title">Quick Actions</h3>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
+                <button class="btn btn-primary" onclick="switchPage('chat', document.querySelector('.nav-item:nth-child(2)'))" style="padding: 14px 24px; font-size: 15px; font-weight: 600; width: 100%;">
+                    Start Chat
+                </button>
+                <button class="btn btn-primary" onclick="switchPage('quiz', document.querySelector('.nav-item:nth-child(3)'))" style="padding: 14px 24px; font-size: 15px; font-weight: 600; width: 100%;">
+                    Create Quiz
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <button class="btn btn-ghost" onclick="document.getElementById('addFilesButton')?.click()" style="width: 100%;">
+                    Add Files
+                </button>
+                <button class="btn btn-ghost" onclick="switchPage('calendar', document.querySelector('.nav-item:nth-child(4)'))" style="width: 100%;">
+                    View Calendar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

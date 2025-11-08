@@ -26,18 +26,18 @@ A modern, feature-rich academic assistant application with AI-powered features i
 - **JavaScript ES6+** - Modern JavaScript
 - **"Focused Horizon" Theme** - Minimalist design with professional academic aesthetic
 
-### Design Theme: "Minimal Coral"
+### Design Theme: "Focused Horizon"
 
-A clean, professional minimal design based on the StudyMate logo's coral/orange color.
+A balanced theme combining academic focus with supportive study companion vibes.
 
 **Color Palette:**
-- **Coral Primary** (#FF6B35) - Main brand color from StudyMate logo
-- **Pure White** (#FFFFFF) - Primary background for clean interface
-- **Deep Black** (#1A1A1A) - Primary text for maximum readability
-- **Neutral Grays** (#F5F5F5 to #737373) - Subtle backgrounds and secondary text
-- **Success/Error** (Green/Red) - Semantic feedback colors
+- **Deep Teal** (#00796B) - Primary color representing wisdom, stability, and concentration
+- **Soft Lavender** (#B0A6C7) - Secondary accent for imagination and elegant touches
+- **Peach Gradient** (#FFB088-#FFCCB3) - Accent color for warmth, enthusiasm, and creativity
+- **Warm Cream** (#F5F5DC) - Background providing clean, inviting, low-strain reading
+- **Charcoal** (#36454F) - Text color offering strong contrast without harshness
 
-The theme emphasizes extreme minimalism with a single-color accent system. Clean white backgrounds with the StudyMate coral accent create a professional, distraction-free learning environment.
+The theme emphasizes clean lines, generous whitespace, and a calming yet stimulating atmosphere perfect for focused study.
 
 ## Project Structure
 
@@ -149,42 +149,19 @@ To deploy:
 - ⚠️ RAG features have limited functionality (no local embeddings)
 
 ### Recent Changes
-
-#### Complete Rebuild (Nov 8, 2025)
-
-**Design System Overhaul:**
-- **Removed ALL old CSS files** - Deleted Tailwind, all theme files, all layout files
-- **Created single `main.css`** - Professional minimal design system based on StudyMate logo coral (#FF6B35)
-- **Rebuilt `index.html`** - Clean HTML using only new minimal CSS, no Tailwind, no external frameworks
-- **Minimal aesthetic** - White backgrounds, coral accents, clean typography, smooth animations
-
-**Supabase Integration (Full Stack):**
-- **Authentication System** - Signup, signin, signout with JWT tokens
-  - `/api/auth/signup` - User registration
-  - `/api/auth/signin` - User login
-  - `/api/auth/signout` - Session termination
-  - `/api/auth/me` - Get current user
-  - `/api/auth/update-profile` - Update user data
-- **Profile Management** - User profiles with avatar upload
-  - `/api/profile` - Get profile data
-  - `/api/profile/upload-avatar` - Avatar image upload to Supabase storage
-  - `/api/profile/stats` - User statistics
-- **Token Management** - Secure access + refresh token storage
-- **Auth Pages** - Beautiful minimal login/signup pages at `/login` and `/signup`
-
-**Routing Improvements:**
-- Registered auth and profile blueprints
-- Added Flask routes for auth pages
-- Client-side navigation with smooth transitions
-- Auth-aware redirects (unauthenticated users go to /login)
-
-**Architecture:**
-- Single CSS file architecture (no dependencies)
-- Clean component-based design tokens
-- Responsive grid system
-- Smooth animations and transitions
-- Professional form styling
-- Minimal but complete UI kit
+- Simplified dependencies to fit Replit disk quota
+- Disabled Flask debug mode and reloader for stability
+- Configured CORS to allow all origins for Replit iframe proxy
+- Updated RAG service to gracefully handle missing dependencies
+- **Implemented "Focused Horizon" theme** (Nov 8, 2025)
+  - Updated all CSS variables to new color palette
+  - Replaced nature greens with professional teal/lavender/peach scheme
+  - Ensured accessibility with proper contrast ratios
+- **Redesigned logo and icons** (Nov 8, 2025)
+  - Created geometric text-based logo with "S²" gradient square
+  - Replaced emoji icons with modern SVG icons throughout navigation
+  - Improved layout with better spacing and responsive grids
+  - Enhanced welcome banner with teal gradient and white typography
 
 ## Next Steps
 

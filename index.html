@@ -5,250 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyMate - Your Academic Companion</title>
     
-    <!-- Single Minimal CSS -->
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body>
-    <!-- App Container -->
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo-container">
-                <img src="/static/images/studymate-logo.png" alt="StudyMate">
-                <span class="logo-text">StudyMate</span>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active" data-page="dashboard">
-                    <svg class="nav-icon" viewBox="0 0 24 24">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
-                
-                <a href="#" class="nav-item" data-page="chat">
-                    <svg class="nav-icon" viewBox="0 0 24 24">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span>AI Chat</span>
-                </a>
-                
-                <a href="#" class="nav-item" data-page="quiz">
-                    <svg class="nav-icon" viewBox="0 0 24 24">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
-                    <span>Quizzes</span>
-                </a>
-                
-                <a href="#" class="nav-item" data-page="calendar">
-                    <svg class="nav-icon" viewBox="0 0 24 24">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    <span>Calendar</span>
-                </a>
-                
-                <a href="#" class="nav-item" data-page="analytics">
-                    <svg class="nav-icon" viewBox="0 0 24 24">
-                        <line x1="12" y1="20" x2="12" y2="10"></line>
-                        <line x1="18" y1="20" x2="18" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="16"></line>
-                    </svg>
-                    <span>Analytics</span>
-                </a>
-            </nav>
-            
-            <div class="user-profile" id="userProfile">
-                <div class="user-avatar" id="userAvatar">A</div>
-                <div class="user-info">
-                    <div class="user-name" id="userName">Guest User</div>
-                    <div class="user-email" id="userEmail">Not signed in</div>
-                </div>
-            </div>
-        </aside>
-        
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-area">
-                <!-- Dashboard Page -->
-                <div id="dashboardPage" class="page-content">
-                    <h2 class="mb-lg">Dashboard</h2>
-                    <div class="grid grid-cols-3 mb-lg">
-                        <div class="card">
-                            <h4 class="mb-sm">Total Quizzes</h4>
-                            <div style="font-size: 2rem; font-weight: 600; color: var(--primary);">0</div>
-                        </div>
-                        <div class="card">
-                            <h4 class="mb-sm">Average Score</h4>
-                            <div style="font-size: 2rem; font-weight: 600; color: var(--primary);">0%</div>
-                        </div>
-                        <div class="card">
-                            <h4 class="mb-sm">Chat Sessions</h4>
-                            <div style="font-size: 2rem; font-weight: 600; color: var(--primary);">0</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Chat Page -->
-                <div id="chatPage" class="page-content" style="display: none;">
-                    <h2 class="mb-lg">AI Chat</h2>
-                    <div class="card">
-                        <p>Chat feature coming soon...</p>
-                    </div>
-                </div>
-                
-                <!-- Quiz Page -->
-                <div id="quizPage" class="page-content" style="display: none;">
-                    <h2 class="mb-lg">Quizzes</h2>
-                    <div class="card">
-                        <p>Quiz feature coming soon...</p>
-                    </div>
-                </div>
-                
-                <!-- Calendar Page -->
-                <div id="calendarPage" class="page-content" style="display: none;">
-                    <h2 class="mb-lg">Calendar</h2>
-                    <div class="card">
-                        <p>Calendar feature coming soon...</p>
-                    </div>
-                </div>
-                
-                <!-- Analytics Page -->
-                <div id="analyticsPage" class="page-content" style="display: none;">
-                    <h2 class="mb-lg">Analytics</h2>
-                    <div class="card">
-                        <p>Analytics feature coming soon...</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    
-    <!-- App JavaScript -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Auth State Management
-        const Auth = {
-            getAccessToken() {
-                return localStorage.getItem('access_token');
-            },
-            
-            getRefreshToken() {
-                return localStorage.getItem('refresh_token');
-            },
-            
-            getUser() {
-                const userStr = localStorage.getItem('user');
-                return userStr ? JSON.parse(userStr) : null;
-            },
-            
-            setSession(session, user) {
-                localStorage.setItem('access_token', session.access_token);
-                localStorage.setItem('refresh_token', session.refresh_token);
-                localStorage.setItem('user', JSON.stringify(user));
-            },
-            
-            clearSession() {
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-                localStorage.removeItem('user');
-            },
-            
-            isAuthenticated() {
-                return !!this.getAccessToken();
-            },
-            
-            async signOut() {
-                const token = this.getAccessToken();
-                if (token) {
-                    try {
-                        await fetch('/api/auth/signout', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Sign out error:', error);
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00796B',
+                        'primary-light': '#26A69A',
+                        'primary-dark': '#004D40',
+                        secondary: '#B0A6C7',
+                        'secondary-light': '#D4CBDF',
+                        'secondary-dark': '#8E839F',
+                        accent: '#FFB088',
+                        'accent-light': '#FFCCB3',
+                        'accent-dark': '#FF9966',
+                        cream: '#F5F5DC',
+                        charcoal: '#36454F',
+                        dark: '#36454F',
+                        success: '#00A896',
+                        warning: '#FFB088',
+                        danger: '#E57373',
                     }
                 }
-                this.clearSession();
-                window.location.href = '/login';
             }
-        };
-        
-        // Page Navigation
-        const Navigation = {
-            currentPage: 'dashboard',
+        }
+    </script>
+    
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="/static/css/nature-theme.css">
+    <link rel="stylesheet" href="/static/css/logo-geometric.css">
+    <link rel="stylesheet" href="/static/css/layout-fixes.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/enhancements.css">
+    <link rel="stylesheet" href="/static/css/theme-override.css">
+</head>
+<body style="background-color: var(--bg);">
+    <!-- Sidebar Component -->
+    <div id="sidebarContainer"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-wrapper">
+            <!-- Dashboard Page -->
+            <div id="dashboardContainer"></div>
+
+            <!-- Chat Page -->
+            <div id="chatPage" class="page-content">
+                <div class="section-card">
+                    <div class="chat-controls">
+                        <div class="chat-controls-row">
+                            <label style="font-weight: 500; color: var(--text); font-size: 13px;">Capabilities:</label>
+                            <div class="capability-toggles">
+                                <label class="capability-toggle active" id="toggleRAG">
+                                    <input type="checkbox" checked data-capability="rag">
+                                    <span>RAG</span>
+                                </label>
+                                <label class="capability-toggle" id="toggleWebSearch">
+                                    <input type="checkbox" data-capability="web_search">
+                                    <span>Web Search</span>
+                                </label>
+                                <label class="capability-toggle" id="toggleResearch">
+                                    <input type="checkbox" data-capability="research">
+                                    <span>Research</span>
+                                </label>
+                                <label class="capability-toggle" id="toggleThinking">
+                                    <input type="checkbox" data-capability="thinking">
+                                    <span>Thinking</span>
+                                </label>
+                            </div>
+                            <button class="btn btn-secondary btn-small" id="addFilesButton">Add Files</button>
+                        </div>
+                        <div class="chat-controls-row">
+                            <span id="modeDescription" style="font-size: 12px; color: var(--text-secondary);">
+                                RAG mode enabled. Add files to enhance responses.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message bot">
+                                <div class="message-content">
+                                    Hello! I'm your AI assistant. How can I help you today?
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." />
+                            <button class="btn btn-primary" id="sendButton">Send</button>
+                            <button class="btn btn-secondary" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Page -->
+            <div id="quizContainer"></div>
+
+            <!-- Calendar Page -->
+            <div id="calendarContainer"></div>
+
+            <!-- Analytics Page -->
+            <div id="analyticsContainer"></div>
+
+            <!-- Profile Page -->
+            <div id="profileContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modalsContainer"></div>
+
+    <!-- Core Scripts -->
+    <script src="/static/js/notifications.js"></script>
+    <script src="/static/js/navigation.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/fileManager.js"></script>
+    <script src="/static/js/componentLoader.js"></script>
+    
+    <!-- Feature Scripts -->
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/quiz.js"></script>
+    <script src="/static/js/calendar.js"></script>
+    <script src="/static/js/analytics.js"></script>
+    <script src="/static/js/profile.js"></script>
+    
+    <!-- Initialize -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load components
+            await ComponentLoader.loadAll();
             
-            switchPage(pageName) {
-                // Hide all pages
-                document.querySelectorAll('.page-content').forEach(page => {
-                    page.style.display = 'none';
-                });
-                
-                // Show selected page
-                const page = document.getElementById(`${pageName}Page`);
-                if (page) {
-                    page.style.display = 'block';
-                    page.classList.add('fade-in');
-                }
-                
-                // Update nav active state
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                const activeNav = document.querySelector(`[data-page="${pageName}"]`);
-                if (activeNav) {
-                    activeNav.classList.add('active');
-                }
-                
-                this.currentPage = pageName;
+            // Initialize modules
+            if (window.fileManagerInstance) {
+                window.fileManagerInstance.init();
             }
-        };
-        
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check auth status
-            if (!Auth.isAuthenticated()) {
-                window.location.href = '/login';
-                return;
+            
+            if (window.dashboardInstance) {
+                await window.dashboardInstance.init();
             }
-            
-            // Update user display
-            const user = Auth.getUser();
-            if (user) {
-                const name = user.user_metadata?.name || user.email;
-                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                
-                document.getElementById('userName').textContent = name;
-                document.getElementById('userEmail').textContent = user.email;
-                document.getElementById('userAvatar').textContent = initials;
+
+            if (typeof Chat !== 'undefined') {
+                window.chatInstance = new Chat();
+                window.chatInstance.init();
             }
-            
-            // Navigation event listeners
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const pageName = item.getAttribute('data-page');
-                    Navigation.switchPage(pageName);
-                });
-            });
-            
-            // User profile click - sign out
-            document.getElementById('userProfile').addEventListener('click', () => {
-                if (confirm('Sign out?')) {
-                    Auth.signOut();
-                }
-            });
-            
-            // Show dashboard by default
-            Navigation.switchPage('dashboard');
+
+            if (typeof Quiz !== 'undefined') {
+                window.quizInstance = new Quiz();
+                window.quizInstance.init();
+            }
+
+            if (typeof Calendar !== 'undefined') {
+                window.calendarInstance = new Calendar();
+                window.calendarInstance.init();
+            }
+
+            if (typeof Analytics !== 'undefined') {
+                window.analyticsInstance = new Analytics();
+            }
+
+            if (typeof Profile !== 'undefined' && window.profileInstance) {
+                window.profileInstance.init();
+            }
         });
     </script>
 </body>
