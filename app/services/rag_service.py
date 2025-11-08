@@ -2,13 +2,26 @@
 import os
 from typing import List, Dict, Optional
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-try:
-    from langchain_huggingface import HuggingFaceEmbeddings
-except ImportError:
-    from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from app.config import Config
+
+try:
+    from langchain_community.vectorstores import FAISS
+    FAISS_AVAILABLE = True
+except ImportError:
+    FAISS_AVAILABLE = False
+    print("⚠️  FAISS not available. RAG features will be disabled.")
+
+try:
+    from langchain_huggingface import HuggingFaceEmbeddings
+    HUGGINGFACE_AVAILABLE = True
+except ImportError:
+    try:
+        from langchain_community.embeddings import HuggingFaceEmbeddings
+        HUGGINGFACE_AVAILABLE = True
+    except ImportError:
+        HUGGINGFACE_AVAILABLE = False
+        print("⚠️  HuggingFace embeddings not available. RAG features will be disabled.")
 
 # Global RAG service instance
 rag_service = None
@@ -31,6 +44,11 @@ class RAGService:
     
     def _initialize_embeddings(self):
         """Initialize embeddings model (using free HuggingFace models)"""
+        if not HUGGINGFACE_AVAILABLE:
+            print("⚠️  HuggingFace embeddings not available. RAG features disabled.")
+            self.embeddings = None
+            return
+        
         try:
             # Use free sentence-transformers model
             self.embeddings = HuggingFaceEmbeddings(
