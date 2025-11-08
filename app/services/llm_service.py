@@ -11,7 +11,7 @@ class LLMService:
     @staticmethod
     def call_llm(messages, model=None):
         """
-        Make a call to the LLM API
+        Make a call to the LLM API with free fallback
         
         Args:
             messages: List of message dicts with 'role' and 'content'
@@ -22,6 +22,7 @@ class LLMService:
         """
         model = model or Config.MODEL
         
+        # Try primary model first
         try:
             response = requests.post(
                 Config.API_URL,
@@ -40,7 +41,26 @@ class LLMService:
             response.raise_for_status()
             return response.json()['choices'][0]['message']['content']
         except requests.exceptions.RequestException as e:
-            raise Exception(f"LLM API error: {str(e)}")
+            # Fallback to free model if primary fails
+            try:
+                response = requests.post(
+                    Config.API_URL,
+                    headers={
+                        "Authorization": f"Bearer {Config.API_KEY}",
+                        "HTTP-Referer": Config.APP_URL,
+                        "X-Title": Config.APP_NAME,
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": "google/gemini-flash-1.5",
+                        "messages": messages
+                    },
+                    timeout=30
+                )
+                response.raise_for_status()
+                return response.json()['choices'][0]['message']['content']
+            except requests.exceptions.RequestException as fallback_error:
+                raise Exception(f"LLM API error (primary and fallback failed): {str(e)}")
     
     @staticmethod
     def stream_llm(messages, model=None):
