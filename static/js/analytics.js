@@ -11,26 +11,9 @@ class Analytics {
     }
 
     init() {
-        if (!window.authManager || !window.authManager.isAuthenticated()) {
-            this.showLoginPrompt();
-            return;
-        }
         this.isActive = true;
         this.loadAnalytics();
         this.startAutoUpdate();
-    }
-
-    showLoginPrompt() {
-        const analyticsContainer = document.getElementById('analyticsContainer');
-        if (analyticsContainer) {
-            analyticsContainer.innerHTML = `
-                <div class="section-card" style="text-align: center; padding: 60px 20px;">
-                    <h2 style="color: var(--text); margin-bottom: 20px;">Analytics</h2>
-                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to view your performance analytics</p>
-                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
-                </div>
-            `;
-        }
     }
 
     stop() {

@@ -61,6 +61,85 @@ class AuthManager {
     }
 
     /**
+     * Check authentication and enforce login
+     */
+    checkAuthAndEnforce() {
+        if (!this.isAuthenticated()) {
+            this.showLoginRequired();
+            return false;
+        } else {
+            this.showAppContent();
+            return true;
+        }
+    }
+
+    /**
+     * Show login required (hide app, show auth modal)
+     */
+    showLoginRequired() {
+        // Hide main app content
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.display = 'none';
+        }
+        
+        // Show auth modal
+        showAuthModal();
+    }
+
+    /**
+     * Show app content (hide auth modal)
+     */
+    showAppContent() {
+        // Show main app content
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.display = 'block';
+        }
+        
+        // Hide auth modal
+        const authModal = document.getElementById('authModal');
+        if (authModal) {
+            authModal.classList.add('hidden');
+        }
+
+        // Reinitialize all features after successful login
+        this.initializeFeatures();
+    }
+
+    /**
+     * Initialize all app features
+     */
+    initializeFeatures() {
+        // Initialize dashboard
+        if (window.dashboardInstance) {
+            window.dashboardInstance.init();
+        }
+
+        // Initialize chat
+        if (window.chatInstance) {
+            window.chatInstance.init();
+        }
+
+        // Initialize quiz
+        if (window.quizInstance) {
+            window.quizInstance.init();
+        }
+
+        // Initialize calendar
+        if (window.calendarInstance) {
+            window.calendarInstance.init();
+        }
+
+        // Initialize profile
+        if (window.profileInstance) {
+            window.profileInstance.init();
+        }
+
+        // Don't auto-start analytics, it starts when user navigates to analytics page
+    }
+
+    /**
      * Check if user is authenticated
      */
     isAuthenticated() {
@@ -99,6 +178,7 @@ class AuthManager {
 
             if (data.user && data.session) {
                 this.saveSession(data.user, data.session);
+                this.showAppContent(); // Show app after successful signup
                 return { success: true, message: data.message };
             }
 
@@ -132,6 +212,7 @@ class AuthManager {
             }
 
             this.saveSession(data.user, data.session);
+            this.showAppContent(); // Show app after successful login
             return { success: true };
         } catch (error) {
             console.error('Login error:', error);
@@ -157,8 +238,8 @@ class AuthManager {
             console.error('Logout error:', error);
         } finally {
             this.clearSession();
-            // Redirect to home or show login modal
-            window.location.href = '/';
+            // Show login modal and hide app content
+            this.showLoginRequired();
         }
     }
 

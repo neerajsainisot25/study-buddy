@@ -5,25 +5,8 @@ class Profile {
     }
 
     init() {
-        if (!window.authManager || !window.authManager.isAuthenticated()) {
-            this.showLoginPrompt();
-            return;
-        }
         this.loadProfile();
         this.setupEventListeners();
-    }
-
-    showLoginPrompt() {
-        const profileContainer = document.getElementById('profileContainer');
-        if (profileContainer) {
-            profileContainer.innerHTML = `
-                <div class="section-card" style="text-align: center; padding: 60px 20px;">
-                    <h2 style="color: var(--text); margin-bottom: 20px;">Profile</h2>
-                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to view and edit your profile</p>
-                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
-                </div>
-            `;
-        }
     }
 
     setupEventListeners() {

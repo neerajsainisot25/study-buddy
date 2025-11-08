@@ -21,11 +21,6 @@ class Quiz {
     }
 
     init() {
-        if (!window.authManager || !window.authManager.isAuthenticated()) {
-            this.showLoginPrompt();
-            return;
-        }
-        
         this.setupSection = document.getElementById('quizSetup');
         this.loadingSection = document.getElementById('quizLoading');
         this.previewSection = document.getElementById('quizPreview');
@@ -34,19 +29,6 @@ class Quiz {
         
         this.showSetup();
         this.loadHistory();
-    }
-
-    showLoginPrompt() {
-        const quizContainer = document.getElementById('quizContainer');
-        if (quizContainer) {
-            quizContainer.innerHTML = `
-                <div class="section-card" style="text-align: center; padding: 60px 20px;">
-                    <h2 style="color: var(--text); margin-bottom: 20px;">Quiz Generator</h2>
-                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to generate and take quizzes</p>
-                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
-                </div>
-            `;
-        }
     }
 
     async generate() {

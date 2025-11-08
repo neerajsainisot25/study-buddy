@@ -5,25 +5,8 @@ class Dashboard {
     }
 
     async init() {
-        if (!window.authManager || !window.authManager.isAuthenticated()) {
-            this.showLoginPrompt();
-            return;
-        }
         await this.loadStats();
         this.updateKBDocCount();
-    }
-
-    showLoginPrompt() {
-        const dashboardContainer = document.getElementById('dashboardContainer');
-        if (dashboardContainer) {
-            dashboardContainer.innerHTML = `
-                <div class="section-card" style="text-align: center; padding: 60px 20px;">
-                    <h2 style="color: var(--text); margin-bottom: 20px;">Welcome to StudyMate</h2>
-                    <p style="color: var(--text-secondary); margin-bottom: 30px;">Please sign in to access your academic dashboard</p>
-                    <button onclick="showAuthModal()" class="btn btn-primary">Sign In</button>
-                </div>
-            `;
-        }
     }
 
     async loadStats() {

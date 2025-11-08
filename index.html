@@ -157,7 +157,15 @@
             // Load components
             await ComponentLoader.loadAll();
             
-            // Initialize modules
+            // CRITICAL: Check authentication before initializing any features
+            // This ensures users must log in before accessing any functionality
+            if (window.authManager && !window.authManager.checkAuthAndEnforce()) {
+                // User not authenticated, auth modal will be shown
+                // Don't initialize features
+                return;
+            }
+            
+            // Initialize modules only if authenticated
             if (window.fileManagerInstance) {
                 window.fileManagerInstance.init();
             }
