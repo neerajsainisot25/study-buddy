@@ -43,11 +43,6 @@ a[style*="color: var(--primary)"] {
     color: var(--primary) !important;
 }
 
-/* Welcome banner override */
-.welcome-banner h2 {
-    color: var(--dark) !important;
-}
-
 /* Ensure all cards use the nature theme */
 .card,
 .section-card {

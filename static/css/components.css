@@ -46,22 +46,22 @@
 /* Welcome Banner - Clean and Spacious */
 .welcome-banner {
     margin-bottom: 32px;
-    padding: 32px;
-    background: linear-gradient(135deg, var(--cream, #F5F5DC), var(--bg-secondary, #FFFFFF));
+    padding: 40px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
     border-radius: var(--border-radius, 12px);
-    border: 1px solid var(--border);
+    border: none;
 }
 
 .welcome-banner h2 {
-    font-size: 32px;
-    font-weight: 600;
-    color: var(--dark, #36454F);
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
     margin-bottom: 8px;
     letter-spacing: -0.02em;
 }
 
 .welcome-banner p {
-    font-size: 15px;
-    color: var(--text-secondary);
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
     line-height: 1.6;
 }
