@@ -273,3 +273,4 @@ For issues or questions:
 **Last Updated**: November 8, 2025  
 **Status**: ✅ Production Ready  
 **Made with** ❤️ **and** ☕
+# study-buddy
