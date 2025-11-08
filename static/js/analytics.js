@@ -47,8 +47,10 @@ class Analytics {
         }
         
         this.updateInterval = setInterval(() => {
-            if (this.isActive) {
+            if (this.isActive && window.authManager && window.authManager.isAuthenticated()) {
                 this.loadAnalytics();
+            } else if (!window.authManager || !window.authManager.isAuthenticated()) {
+                this.stop();
             }
         }, this.updateFrequency);
     }

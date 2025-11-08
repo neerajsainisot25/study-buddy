@@ -15,8 +15,8 @@ A modern, feature-rich academic assistant application with AI-powered features i
 - **Flask 3.0.0** - Python web framework
 - **LangChain** - AI/LLM integration framework
 - **LangGraph** - Advanced AI workflow orchestration
-- **OpenRouter API** - LLM provider (using GPT-3.5-turbo)
-- **Supabase** (optional) - Database and authentication
+- **OpenRouter API** - LLM provider (using GPT-3.5-turbo with Google Gemini Flash 1.5 fallback)
+- **Supabase** (required) - Database and authentication backend
 - **BeautifulSoup4** - Web scraping
 - **DuckDuckGo Search** - Web search integration
 
@@ -69,10 +69,10 @@ The theme emphasizes clean lines, generous whitespace, and a calming yet stimula
 
 The application uses the following environment variables (configure via Replit Secrets):
 
-- `OPENROUTER_API_KEY` - **Required for AI features** - OpenRouter API key for LLM access
-- `SUPABASE_URL` - (Optional) Supabase project URL
-- `SUPABASE_KEY` - (Optional) Supabase anonymous key
-- `SUPABASE_SERVICE_KEY` - (Optional) Supabase service role key
+- `OPENROUTER_API_KEY` - **Required** - OpenRouter API key for AI chat and quiz generation (free fallback to Google Gemini Flash 1.5)
+- `SUPABASE_URL` - **Required** - Supabase project URL for authentication and database
+- `SUPABASE_KEY` - **Required** - Supabase anonymous key for client-side auth
+- `SUPABASE_SERVICE_KEY` - **Required** - Supabase service role key for server-side operations
 - `PORT` - Server port (default: 5000)
 - `FLASK_DEBUG` - Debug mode (default: False for production)
 - `STORAGE_TYPE` - Storage backend: 'memory' or 'file' (default: memory)
@@ -99,18 +99,20 @@ The project uses `requirements-minimal.txt` which excludes heavy dependencies li
 5. **Analytics** - Performance tracking and metrics
 6. **Profile Management** - User settings and preferences
 
-### Optional Features (Require Configuration)
-- **Supabase Integration** - For database persistence (configure Supabase keys)
-- **RAG/Document Search** - Limited without sentence-transformers (warning shown in logs)
-- **Web Search** - DuckDuckGo integration for enhanced chat
+### Advanced Features
+- **RAG/Document Search** - Available but limited without sentence-transformers (requires more disk space)
+- **Web Search** - DuckDuckGo integration for enhanced chat responses
+- **OpenRouter Fallback** - Automatic fallback to free Google Gemini Flash 1.5 model if primary fails
 
 ## Known Issues & Warnings
 
 1. **Sentence Transformers Warning**: The app shows a warning about missing `sentence-transformers` package. This is expected and doesn't affect core functionality. RAG features will work with limited capability.
 
-2. **Supabase Warning**: If Supabase is not configured, you'll see a warning. This is normal - the app uses in-memory storage as a fallback.
+2. **Supabase Required**: Supabase is now REQUIRED for authentication. Without Supabase credentials, users cannot access any features of the application.
 
-3. **Tailwind CDN Warning**: The browser console shows a warning about using Tailwind via CDN in production. This is for development convenience - for production, consider installing Tailwind locally.
+3. **Database Setup Required**: After adding Supabase credentials, you MUST run the database schema (see `SUPABASE_SETUP.md`). Without this, authentication will fail.
+
+4. **Tailwind CDN Warning**: The browser console shows a warning about using Tailwind via CDN in production. This is for development convenience - for production, consider installing Tailwind locally.
 
 ## API Endpoints
 
