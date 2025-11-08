@@ -120,8 +120,12 @@
 
     <!-- Modals Container -->
     <div id="modalsContainer"></div>
+    
+    <!-- Auth Modal -->
+    <div id="authModalContainer"></div>
 
     <!-- Core Scripts -->
+    <script src="/static/js/auth.js"></script>
     <script src="/static/js/notifications.js"></script>
     <script src="/static/js/navigation.js"></script>
     <script src="/static/js/dashboard.js"></script>
@@ -138,6 +142,18 @@
     <!-- Initialize -->
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            // Load auth modal
+            const authModalContainer = document.getElementById('authModalContainer');
+            if (authModalContainer) {
+                try {
+                    const response = await fetch('/templates/components/auth_modal.html');
+                    const html = await response.text();
+                    authModalContainer.innerHTML = html;
+                } catch (error) {
+                    console.error('Error loading auth modal:', error);
+                }
+            }
+            
             // Load components
             await ComponentLoader.loadAll();
             
