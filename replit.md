@@ -24,7 +24,20 @@ A modern, feature-rich academic assistant application with AI-powered features i
 - **HTML5/CSS3** - Modern semantic markup and styling
 - **Tailwind CSS** - Utility-first CSS framework (via CDN)
 - **JavaScript ES6+** - Modern JavaScript
-- **Glassmorphism Design** - Frosted glass effects with backdrop blur
+- **"Focused Horizon" Theme** - Minimalist design with professional academic aesthetic
+
+### Design Theme: "Focused Horizon"
+
+A balanced theme combining academic focus with supportive study companion vibes.
+
+**Color Palette:**
+- **Deep Teal** (#00796B) - Primary color representing wisdom, stability, and concentration
+- **Soft Lavender** (#B0A6C7) - Secondary accent for imagination and elegant touches
+- **Peach Gradient** (#FFB088-#FFCCB3) - Accent color for warmth, enthusiasm, and creativity
+- **Warm Cream** (#F5F5DC) - Background providing clean, inviting, low-strain reading
+- **Charcoal** (#36454F) - Text color offering strong contrast without harshness
+
+The theme emphasizes clean lines, generous whitespace, and a calming yet stimulating atmosphere perfect for focused study.
 
 ## Project Structure
 
@@ -131,6 +144,8 @@ To deploy:
 - ✅ Workflow configured and running
 - ✅ All API endpoints responding (200 OK)
 - ✅ Deployment configured for Autoscale
+- ✅ **"Focused Horizon" theme fully implemented** with teal/lavender/peach palette
+- ✅ StudyMate logo integrated in sidebar
 - ⚠️ RAG features have limited functionality (no local embeddings)
 
 ### Recent Changes
@@ -138,6 +153,11 @@ To deploy:
 - Disabled Flask debug mode and reloader for stability
 - Configured CORS to allow all origins for Replit iframe proxy
 - Updated RAG service to gracefully handle missing dependencies
+- **Implemented "Focused Horizon" theme** (Nov 8, 2025)
+  - Updated all CSS variables to new color palette
+  - Integrated StudyMate logo in sidebar
+  - Replaced nature greens with professional teal/lavender/peach scheme
+  - Ensured accessibility with proper contrast ratios
 
 ## Next Steps
 

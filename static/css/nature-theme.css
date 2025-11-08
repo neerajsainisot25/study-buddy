@@ -18,9 +18,12 @@
     --charcoal: #36454F;          /* Charcoal */
     
     /* Neutral Base */
-    --bg: #FAFAFA;                /* Clean white background */
+    --bg: #F5F5DC;                /* Warm Cream background */
     --bg-secondary: #FFFFFF;      /* Pure white */
     --bg-tertiary: #F5F5DC;       /* Cream */
+    
+    /* Additional utility color */
+    --stone: #B0A6C7;             /* Soft Lavender (secondary) */
     
     --dark: #36454F;              /* Charcoal */
     --text: #36454F;              /* Charcoal text */
@@ -273,7 +276,7 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(139, 157, 131, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1);
 }
 
 /* Stats/Metrics - Minimalist Cards */
@@ -312,17 +315,17 @@ select:focus {
 }
 
 .badge-success {
-    background: rgba(122, 157, 126, 0.15);
+    background: rgba(0, 168, 150, 0.12);
     color: var(--success);
 }
 
 .badge-warning {
-    background: rgba(212, 163, 115, 0.15);
+    background: rgba(255, 176, 136, 0.15);
     color: var(--warning);
 }
 
 .badge-error {
-    background: rgba(193, 125, 111, 0.15);
+    background: rgba(229, 115, 115, 0.15);
     color: var(--error);
 }
 
