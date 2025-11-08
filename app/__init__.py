@@ -50,6 +50,13 @@ def create_app(config_class=Config):
     from app.routes import chat_bp, quiz_bp, calendar_bp
     from app.routes.rag import rag_bp
     from app.routes.analytics import analytics_bp
+    from app.routes.auth import auth_bp
+    from app.routes.profile import profile_bp
+    
+    # Auth and profile routes
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(profile_bp, url_prefix='/api/profile')
+    
     # Old chat routes (kept for backward compatibility, but new routes take precedence)
     app.register_blueprint(chat_bp, url_prefix='/api/chat')
     app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
@@ -96,6 +103,17 @@ def create_app(config_class=Config):
         import os
         root_dir = os.path.dirname(os.path.dirname(__file__))
         return send_from_directory(root_dir, 'index.html')
+    
+    # Auth page routes
+    @app.route('/login')
+    def login_page():
+        from flask import render_template
+        return render_template('auth/login.html')
+    
+    @app.route('/signup')
+    def signup_page():
+        from flask import render_template
+        return render_template('auth/signup.html')
 
     return app
 

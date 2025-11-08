@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - StudyMate</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card fade-in">
+            <div class="auth-logo">
+                <img src="/static/images/studymate-logo.png" alt="StudyMate">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to continue your learning journey</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-input" 
+                        placeholder="you@example.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="••••••••"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+                
+                <div id="errorMessage" style="display: none; padding: 12px; background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--error); border-radius: var(--radius-md); margin-bottom: 16px; color: var(--error); font-size: 0.875rem;"></div>
+                
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                    <span id="buttonText">Sign In</span>
+                </button>
+            </form>
+            
+            <p class="auth-link">
+                Don't have an account? <a href="/signup">Sign up</a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const buttonText = document.getElementById('buttonText');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Clear previous errors
+            errorMessage.style.display = 'none';
+            buttonText.textContent = 'Signing in...';
+            
+            try {
+                const response = await fetch('/api/auth/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Store session
+                    localStorage.setItem('access_token', data.session.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = '/';
+                } else {
+                    throw new Error(data.error || 'Sign in failed');
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+                buttonText.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>
