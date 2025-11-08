@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified AI App - Chat, Quiz & Calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .app-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 280px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user { justify-content: flex-end; }
+        .message.bot { justify-content: flex-start; }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            max-width: 70px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Quiz Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #fff5f7;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #fff5f7;
+        }
+
+        .results-section {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 30px;
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .result-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .result-item.correct {
+            border-left: 4px solid #4caf50;
+        }
+
+        .result-item.incorrect {
+            border-left: 4px solid #f5576c;
+        }
+
+        /* Calendar Styles */
+        .calendar-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-controls input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 10px;
+            color: #667eea;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .calendar-day:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .calendar-day.today {
+            border-color: #667eea;
+            background: #e8f0fe;
+            font-weight: 600;
+        }
+
+        .calendar-day.has-events {
+            background: #fff5f7;
+        }
+
+        .calendar-day.has-events::after {
+            content: '•';
+            color: #f5576c;
+            font-size: 24px;
+            position: absolute;
+            bottom: 5px;
+            right: 8px;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .events-list {
+            margin-top: 20px;
+        }
+
+        .event-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-item .event-info h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .event-item .event-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .event-item .event-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: #f5576c;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .ai-suggest-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <h1>🚀 Unified AI App</h1>
+            <p>Chat • Quiz • Calendar</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('chat', this)">💬 Chat</button>
+            <button class="nav-tab" onclick="switchTab('quiz', this)">🎯 Quiz</button>
+            <button class="nav-tab" onclick="switchTab('calendar', this)">📅 Calendar</button>
+        </div>
+
+        <div class="content-area">
+            <!-- Chat Tab -->
+            <div id="chatTab" class="tab-content active">
+                <div class="chat-container">
+                    <div class="chat-mode-selector" style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #e0e0e0; display: flex; gap: 10px; align-items: center;">
+                        <label style="font-weight: 600; color: #333;">Mode:</label>
+                        <select id="chatMode" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; cursor: pointer;">
+                            <option value="normal">💬 Normal Chat (RAG-Enhanced)</option>
+                            <option value="thinking">🧠 Thinking Mode (RAG-Enhanced)</option>
+                            <option value="research">🔍 Research Mode</option>
+                            <option value="rag">📚 Full RAG Mode</option>
+                        </select>
+                        <span id="modeDescription" style="font-size: 12px; color: #666; margin-left: 10px;">
+                            Standard conversation (auto-enhanced with knowledge base if available)
+                        </span>
+                        <span id="ragStatus" style="font-size: 11px; color: #28a745; margin-left: 10px; font-weight: 600; display: none;">
+                            📚 KB Ready
+                        </span>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot">
+                            <div class="message-content">
+                                Hello! I'm your AI assistant. How can I help you today?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message here..." />
+                        <button class="btn btn-primary" id="sendButton">Send</button>
+                        <button class="btn btn-secondary" id="clearButton">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Tab -->
+            <div id="quizTab" class="tab-content">
+                <div id="quizSetup" class="setup-section">
+                    <div class="form-group">
+                        <label>Enter Quiz Topic</label>
+                        <input type="text" id="topicInput" placeholder="e.g., Python programming, World History..." />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Number of Questions</label>
+                            <input type="number" id="numQuestions" min="1" max="20" value="5" />
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateQuiz()">Generate Quiz</button>
+                </div>
+
+                <div id="quizLoading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Generating your quiz questions...</p>
+                </div>
+
+                <div id="quizSection" class="hidden">
+                    <div id="questionsContainer"></div>
+                    <button class="btn btn-primary" onclick="submitQuiz()">Submit Quiz</button>
+                </div>
+
+                <div id="quizResults" class="results-section hidden">
+                    <div class="score-circle">
+                        <div id="scoreValue">0%</div>
+                        <div style="font-size: 18px; margin-top: 10px;">Score</div>
+                    </div>
+                    <h2 id="scoreText"></h2>
+                    <div id="resultsContainer"></div>
+                    <button class="btn btn-secondary" onclick="resetQuiz()" style="margin-top: 20px;">New Quiz</button>
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div id="calendarTab" class="tab-content">
+                <div class="calendar-controls">
+                    <input type="date" id="calendarDate" />
+                    <button class="btn btn-primary" onclick="loadCalendar()">View Calendar</button>
+                </div>
+                <div id="calendarContainer"></div>
+                <div style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px;">Add Event</h3>
+                    <div class="form-group">
+                        <label>Event Title</label>
+                        <input type="text" id="eventTitle" placeholder="Event title" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="eventDescription" placeholder="Event description" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="eventDate" />
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            <input type="time" id="eventTime" />
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary ai-suggest-btn" onclick="suggestEvent()">🤖 AI Suggest</button>
+                    <button class="btn btn-primary" onclick="addEvent()" style="width: 100%; margin-top: 10px;">Add Event</button>
+                </div>
+                <div id="eventsList" class="events-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modular JavaScript -->
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/quiz.js"></script>
+    <script src="/static/js/calendar.js"></script>
+    
+    <script>
+        // Initialize modules when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Chat !== 'undefined') {
+                window.chatInstance = new Chat();
+                window.chatInstance.init();
+            }
+            if (typeof Quiz !== 'undefined') {
+                window.quizInstance = new Quiz();
+                window.quizInstance.init();
+            }
+            if (typeof Calendar !== 'undefined') {
+                window.calendarInstance = new Calendar();
+                window.calendarInstance.init();
+            }
+        });
+        
+        // Tab switching function
+        function switchTab(tab, element) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+            
+            if (tab === 'calendar' && typeof Calendar !== 'undefined' && window.calendarInstance) {
+                window.calendarInstance.loadCalendar();
+            }
+        }
+    </script>
+</body>
+</html>
+
