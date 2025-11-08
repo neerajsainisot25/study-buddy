@@ -1,3 +1,90 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+venv.bak/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nose2-junit-report.xml
+
+# Pyre type checker
+.pyre/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# env files
+.env
+*.env
+
+# Flask instance folder
+instance/
+
+# SQLite database
+*.db
+*.sqlite3
+
+# Uploaded files / runtime data
+data/uploads/
+uploads/
+
+# Vectorstore / indexes
+data/vectorstore/
+*.faiss
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Misc
+coverage.xml
+htmlcov/
+dist/
+*.egg-info/
+docs/_build/
 # Python
 __pycache__/
 *.py[cod]
