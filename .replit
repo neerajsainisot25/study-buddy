@@ -1,4 +1,4 @@
-modules = ["web", "nodejs-20", "python-3.11"]
+modules = ["web", "nodejs-20", "python-3.11", "postgresql-16"]
 [agent]
 expertMode = true
 
@@ -16,10 +16,6 @@ externalPort = 3000
 [[ports]]
 localPort = 34735
 externalPort = 3001
-
-[[ports]]
-localPort = 39407
-externalPort = 3002
 
 [workflows]
 runButton = "Project"
