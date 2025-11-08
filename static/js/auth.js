@@ -83,6 +83,9 @@ class AuthManager {
             mainContent.style.display = 'none';
         }
         
+        // Update UI to show "Sign In" button in sidebar
+        this.updateUI();
+        
         // Show auth modal
         showAuthModal();
     }
@@ -102,6 +105,9 @@ class AuthManager {
         if (authModal) {
             authModal.classList.add('hidden');
         }
+
+        // Update UI to show user info in sidebar
+        this.updateUI();
 
         // Reinitialize all features after successful login
         this.initializeFeatures();
