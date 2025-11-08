@@ -109,7 +109,7 @@ h6 { font-size: 14px; }
 }
 
 .sidebar-header {
-    padding: 32px 24px 24px;
+    padding: 24px 20px;
     border-bottom: 1px solid var(--border);
     background: var(--bg-secondary);
 }
@@ -119,12 +119,6 @@ h6 { font-size: 14px; }
     align-items: center;
     gap: 16px;
     margin-bottom: 8px;
-}
-
-.sidebar-header .logo-image {
-    width: 120px;
-    height: auto;
-    object-fit: contain;
 }
 
 .sidebar-header h1 {
