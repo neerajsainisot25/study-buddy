@@ -51,23 +51,19 @@ def create_app(config_class=Config):
     from app.routes.rag import rag_bp
     from app.routes.analytics import analytics_bp
     from app.routes.auth import auth_bp
-    from app.routes.quiz_supabase import quiz_supabase_bp
-    from app.routes.calendar_supabase import calendar_supabase_bp
-    from app.routes.analytics_supabase import analytics_supabase_bp
     
     # Authentication routes
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     
-    # Supabase-powered routes (with auth) - registered first to take precedence
-    app.register_blueprint(quiz_supabase_bp, url_prefix='/api/quiz')
-    app.register_blueprint(calendar_supabase_bp, url_prefix='/api/calendar')
-    app.register_blueprint(analytics_supabase_bp, url_prefix='/api/analytics')
+    # Main app routes
+    app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
+    app.register_blueprint(calendar_bp, url_prefix='/api/calendar')
+    app.register_blueprint(analytics_bp, url_prefix='/api/analytics')
     
-    # Legacy routes (fallback if Supabase not available)
-    app.register_blueprint(chat_bp, url_prefix='/api/chat_legacy')
-    app.register_blueprint(quiz_bp, url_prefix='/api/quiz_legacy')
-    app.register_blueprint(calendar_bp, url_prefix='/api/calendar_legacy')
-    app.register_blueprint(analytics_bp, url_prefix='/api/analytics_legacy')
+    # Chat routes (active)
+    app.register_blueprint(chat_bp, url_prefix='/api/chat')
+    
+    # RAG routes
     app.register_blueprint(rag_bp, url_prefix='/api/rag')
     
     # Route for chat.html template
