@@ -1,0 +1,95 @@
+/* Theme Override - Force Nature Theme Colors */
+
+/* Override any inline styles and legacy colors */
+.section-card[style*="background: linear-gradient(135deg, rgba(158, 207, 212"] {
+    background: linear-gradient(135deg, rgba(139, 157, 131, 0.1) 0%, rgba(168, 185, 160, 0.1) 100%) !important;
+    border: 2px solid var(--primary) !important;
+}
+
+.section-card[style*="rgba(158, 207, 212, 0.05)"] {
+    background: linear-gradient(135deg, rgba(139, 157, 131, 0.05) 0%, rgba(139, 157, 131, 0.1) 100%) !important;
+}
+
+/* Force metric icon colors */
+.metric-icon[style*="rgba(158, 207, 212, 0.15)"] {
+    background: rgba(139, 157, 131, 0.15) !important;
+}
+
+.metric-icon[style*="rgba(255, 138, 101, 0.15)"] {
+    background: rgba(212, 175, 143, 0.15) !important;
+}
+
+.metric-icon[style*="rgba(46, 204, 113, 0.15)"] {
+    background: rgba(122, 157, 126, 0.15) !important;
+}
+
+/* Override gradient bars */
+div[style*="background: linear-gradient(90deg, var(--primary)"] {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%) !important;
+}
+
+div[style*="background: linear-gradient(90deg, var(--accent)"] {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%) !important;
+}
+
+/* Badge color overrides */
+span[style*="background: var(--primary)"] {
+    background: var(--primary) !important;
+    color: var(--text-on-primary) !important;
+}
+
+/* Link color override */
+a[style*="color: var(--primary)"] {
+    color: var(--primary) !important;
+}
+
+/* Welcome banner override */
+.welcome-banner h2 {
+    color: var(--dark) !important;
+}
+
+/* Ensure all cards use the nature theme */
+.card,
+.section-card {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+}
+
+/* Button styling */
+.btn-primary {
+    background: var(--primary) !important;
+    color: var(--text-on-primary) !important;
+}
+
+.btn-secondary {
+    background: var(--accent-light) !important;
+    color: var(--text-on-accent) !important;
+}
+
+.btn-ghost {
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+}
+
+.btn-ghost:hover {
+    background: var(--bg-tertiary) !important;
+}
+
+/* Navigation active state */
+.nav-item.active {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary)) !important;
+    color: var(--text-on-primary) !important;
+}
+
+/* Dashboard grid fix */
+.dashboard-grid {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* Ensure proper spacing */
+.content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+}

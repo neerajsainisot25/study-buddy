@@ -7,7 +7,7 @@ load_dotenv()
 class Config:
     """Application configuration"""
     # API Configuration
-    API_KEY = os.getenv('OPENROUTER_API_KEY', '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')
+    API_KEY = os.getenv('OPENROUTER_API_KEY', '')
     API_URL = os.getenv('LLM_URL', 'https://openrouter.ai/api/v1/chat/completions')
     MODEL = 'openai/gpt-3.5-turbo'
     
