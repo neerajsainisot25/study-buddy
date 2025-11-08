@@ -1,44 +1,47 @@
 /* Nature-Inspired Minimalist Theme for StudyMate */
 
 :root {
-    /* Nature-Inspired Color Palette */
-    --primary: #8B9D83;           /* Sage Green */
-    --primary-light: #A8B9A0;     /* Light Sage */
-    --primary-dark: #6B7D63;      /* Dark Sage */
+    /* Focused Horizon Color Palette */
+    --primary: #00796B;           /* Deep Teal */
+    --primary-light: #26A69A;     /* Light Teal */
+    --primary-dark: #004D40;      /* Dark Teal */
     
-    --accent: #D4AF8F;            /* Warm Sand/Beige */
-    --accent-light: #E5C9AB;      /* Light Sand */
-    --accent-dark: #B89870;       /* Dark Sand */
+    --secondary: #B0A6C7;         /* Soft Lavender */
+    --secondary-light: #D4CBDF;   /* Light Lavender */
+    --secondary-dark: #8E839F;    /* Dark Lavender */
     
-    --earth: #8C7355;             /* Earthy Brown */
-    --cream: #F5F1E8;             /* Soft Cream */
-    --stone: #A8A39D;             /* Stone Gray */
+    --accent: #FFB088;            /* Peach */
+    --accent-light: #FFCCB3;      /* Light Peach */
+    --accent-dark: #FF9966;       /* Dark Peach */
+    
+    --cream: #F5F5DC;             /* Warm Off-White/Cream */
+    --charcoal: #36454F;          /* Charcoal */
     
     /* Neutral Base */
-    --bg: #FAFAF8;                /* Off-white background */
+    --bg: #FAFAFA;                /* Clean white background */
     --bg-secondary: #FFFFFF;      /* Pure white */
-    --bg-tertiary: #F5F1E8;       /* Cream */
+    --bg-tertiary: #F5F5DC;       /* Cream */
     
-    --dark: #3A3A38;              /* Charcoal */
-    --text: #3A3A38;              /* Charcoal text */
-    --text-secondary: #6B6B68;    /* Medium gray */
-    --text-light: #9A9A97;        /* Light gray */
+    --dark: #36454F;              /* Charcoal */
+    --text: #36454F;              /* Charcoal text */
+    --text-secondary: #5A6B75;    /* Medium gray */
+    --text-light: #8B9DA8;        /* Light gray */
     --text-on-primary: #FFFFFF;
-    --text-on-accent: #3A3A38;
+    --text-on-accent: #36454F;
     
     /* Borders */
-    --border: #E8E6E0;            /* Soft beige border */
-    --border-light: #F0EEE8;
+    --border: #E8E8E8;            /* Clean gray border */
+    --border-light: #F0F0F0;
     
-    /* Status Colors - Muted Nature Tones */
-    --success: #7A9D7E;           /* Muted green */
-    --warning: #D4A373;           /* Muted amber */
-    --error: #C17D6F;             /* Muted terracotta */
+    /* Status Colors - Harmonious Palette */
+    --success: #00A896;           /* Teal green */
+    --warning: #FFB088;           /* Peach */
+    --error: #E57373;             /* Soft red */
     
     /* Shadows - Soft and subtle */
-    --shadow-sm: 0 1px 3px rgba(58, 58, 56, 0.06);
-    --shadow-md: 0 4px 12px rgba(58, 58, 56, 0.08);
-    --shadow-lg: 0 8px 24px rgba(58, 58, 56, 0.10);
+    --shadow-sm: 0 1px 3px rgba(54, 69, 79, 0.08);
+    --shadow-md: 0 4px 12px rgba(54, 69, 79, 0.12);
+    --shadow-lg: 0 8px 24px rgba(54, 69, 79, 0.15);
     
     /* Layout */
     --sidebar-width: 280px;
