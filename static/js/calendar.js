@@ -52,7 +52,7 @@ class Calendar {
 
         try {
             const today = new Date().toISOString().split('T')[0];
-            const response = await window.authManager.apiCall(`/api/calendar/events?date=${today}`);
+            const response = await fetch(`/api/calendar/events?date=${today}`);
             
             if (response.ok) {
                 const data = await response.json();
@@ -86,9 +86,6 @@ class Calendar {
                 });
                 
                 container.innerHTML = html;
-            } else if (response.status === 401) {
-                showAuthModal();
-            }
         } catch (error) {
             console.error('Error loading today events:', error);
         }
@@ -177,16 +174,12 @@ class Calendar {
                 const date = new Date(year, month, day);
                 const dateStr = date.toISOString().split('T')[0];
                 
-                const response = await window.authManager.apiCall(`/api/calendar/events?date=${dateStr}`);
+                const response = await fetch(`/api/calendar/events?date=${dateStr}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.events && data.events.length > 0) {
                         this.events[dateStr] = data.events;
                     }
-                } else if (response.status === 401) {
-                    showAuthModal();
-                    break;
-                }
             }
             
             this.renderCalendar();
@@ -202,7 +195,7 @@ class Calendar {
         if (!container) return;
 
         try {
-            const response = await window.authManager.apiCall('/api/calendar/upcoming');
+            const response = await fetch('/api/calendar/upcoming');
             if (response.ok) {
                 const data = await response.json();
                 const events = data.events || [];

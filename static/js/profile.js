@@ -20,11 +20,8 @@ class Profile {
 
     async loadProfile() {
         try {
-            const response = await window.authManager.apiCall('/api/auth/profile');
+            const response = await fetch('/api/auth/profile');
             if (!response.ok) {
-                if (response.status === 401) {
-                    showAuthModal();
-                }
                 return;
             }
             const data = await response.json();
@@ -76,7 +73,7 @@ class Profile {
         const bio = document.getElementById('profileBio')?.value;
 
         try {
-            const response = await window.authManager.apiCall('/api/auth/profile', {
+            const response = await fetch('/api/auth/profile', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -117,7 +114,7 @@ class Profile {
         }
 
         try {
-            const response = await window.authManager.apiCall('/api/auth/profile', {
+            const response = await fetch('/api/auth/profile', {
                 method: 'DELETE'
             });
 

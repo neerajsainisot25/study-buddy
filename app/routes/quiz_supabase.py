@@ -8,9 +8,8 @@ import time
 quiz_supabase_bp = Blueprint('quiz_supabase', __name__)
 
 @quiz_supabase_bp.route('/generate', methods=['POST'])
-@require_auth
 def generate_quiz():
-    """Generate quiz questions using LLM and store in Supabase"""
+    """Generate quiz questions using LLM"""
     data = request.json or {}
     topic = data.get('topic', '').strip()
     num_questions = int(data.get('num_questions', 5))
@@ -18,7 +17,7 @@ def generate_quiz():
     difficulty = data.get('difficulty', 'intermediate')
     source_material = data.get('source_material', 'general')
     
-    user_id = request.user_id
+    user_id = None  # No auth required
     
     if not topic:
         return jsonify({"error": "Topic is required"}), 400
@@ -101,16 +100,13 @@ Return ONLY a JSON array of questions, no other text."""
         return jsonify({"error": str(e)}), 500
 
 @quiz_supabase_bp.route('/submit', methods=['POST'])
-@require_auth
 def submit_quiz_answers():
-    """Evaluate quiz answers and save to Supabase"""
+    """Evaluate quiz answers (no auth required)"""
     data = request.json or {}
     answers = data.get('answers', [])
     questions = data.get('questions', [])
     quiz_id = data.get('quiz_id', '')
     time_taken = data.get('time_taken', 0)
-    
-    user_id = request.user_id
     
     if not answers or not questions:
         return jsonify({"error": "Answers and questions are required"}), 400
@@ -149,10 +145,9 @@ def submit_quiz_answers():
             except:
                 pass
         
-        # Store quiz attempt in Supabase
+        # Store quiz attempt in Supabase (no user_id since no auth)
         if supabase_service.is_available():
             attempt_data = {
-                "user_id": user_id,
                 "quiz_id": quiz_id if quiz_id else None,
                 "topic": quiz_topic,
                 "score": score,
@@ -162,7 +157,8 @@ def submit_quiz_answers():
                 "answers": results
             }
             
-            supabase_service.client.table('quiz_attempts').insert(attempt_data).execute()
+            # Skip saving without user_id - would violate database constraints
+            # supabase_service.client.table('quiz_attempts').insert(attempt_data).execute()
         
         return jsonify({
             "score": score,
@@ -175,24 +171,20 @@ def submit_quiz_answers():
         return jsonify({"error": str(e)}), 500
 
 @quiz_supabase_bp.route('/history', methods=['GET'])
-@require_auth
 def get_quiz_history():
-    """Get quiz history from Supabase"""
-    user_id = request.user_id
-    
+    """Get quiz history (no auth required - returns empty)"""
     try:
         if not supabase_service.is_available():
-            return jsonify({"error": "Database not available"}), 500
+            return jsonify({"total_quizzes": 0, "total_attempts": 0, "average_score": 0, "recent_attempts": []})
         
-        # Get quizzes and attempts
-        quizzes = supabase_service.client.table('quizzes').select('*').eq('user_id', user_id).execute()
-        attempts = supabase_service.client.table('quiz_attempts').select('*').eq('user_id', user_id).order('created_at', desc=True).execute()
+        # No auth - return empty history
+        quizzes = []
+        attempts = []
         
-        total_quizzes = len(quizzes.data) if quizzes.data else 0
-        total_attempts = len(attempts.data) if attempts.data else 0
-        
-        attempts_data = attempts.data if attempts.data else []
-        avg_score = sum(a.get('score', 0) for a in attempts_data) / len(attempts_data) if attempts_data else 0
+        total_quizzes = 0
+        total_attempts = 0
+        attempts_data = []
+        avg_score = 0
         
         return jsonify({
             "total_quizzes": total_quizzes,
@@ -204,16 +196,14 @@ def get_quiz_history():
         return jsonify({"error": str(e)}), 500
 
 @quiz_supabase_bp.route('/list', methods=['GET'])
-@require_auth
 def get_quiz_list():
-    """Get list of all quizzes for user"""
-    user_id = request.user_id
-    
+    """Get list of all quizzes (no auth required - returns empty)"""
     try:
         if not supabase_service.is_available():
-            return jsonify({"error": "Database not available"}), 500
+            return jsonify({"quizzes": [], "count": 0})
         
-        quizzes = supabase_service.client.table('quizzes').select('*').eq('user_id', user_id).order('created_at', desc=True).execute()
+        # No auth - return empty list
+        quizzes = {"data": []}
         
         return jsonify({
             "quizzes": quizzes.data if quizzes.data else [],

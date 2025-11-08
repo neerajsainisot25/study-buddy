@@ -121,8 +121,8 @@
     <!-- Modals Container -->
     <div id="modalsContainer"></div>
     
-    <!-- Auth Modal -->
-    <div id="authModalContainer"></div>
+    <!-- Auth Modal (hidden) -->
+    <div id="authModalContainer" style="display: none;"></div>
 
     <!-- Core Scripts -->
     <script src="/static/js/auth.js"></script>
@@ -157,15 +157,7 @@
             // Load components
             await ComponentLoader.loadAll();
             
-            // CRITICAL: Check authentication before initializing any features
-            // This ensures users must log in before accessing any functionality
-            if (window.authManager && !window.authManager.checkAuthAndEnforce()) {
-                // User not authenticated, auth modal will be shown
-                // Don't initialize features
-                return;
-            }
-            
-            // Initialize modules only if authenticated
+            // Initialize modules
             if (window.fileManagerInstance) {
                 window.fileManagerInstance.init();
             }

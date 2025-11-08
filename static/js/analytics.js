@@ -40,11 +40,8 @@ class Analytics {
 
     async loadAnalytics() {
         try {
-            const response = await window.authManager.apiCall('/api/analytics/dashboard');
+            const response = await fetch('/api/analytics/dashboard');
             if (!response.ok) {
-                if (response.status === 401) {
-                    showAuthModal();
-                }
                 return;
             }
             const data = await response.json();

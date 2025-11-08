@@ -50,11 +50,8 @@ class Dashboard {
 
     async loadAnalytics() {
         try {
-            const response = await window.authManager.apiCall('/api/chat/analytics');
-            if (!response.ok) {
-                if (response.status === 401) throw new Error('Unauthorized');
-                return;
-            }
+            const response = await fetch('/api/chat/analytics');
+            if (!response.ok) return;
             const data = await response.json();
             
             if (data.total_queries !== undefined) {
@@ -73,11 +70,8 @@ class Dashboard {
 
     async loadEvents() {
         try {
-            const response = await window.authManager.apiCall('/api/calendar/upcoming');
-            if (!response.ok) {
-                if (response.status === 401) throw new Error('Unauthorized');
-                return;
-            }
+            const response = await fetch('/api/calendar/upcoming');
+            if (!response.ok) return;
             const data = await response.json();
             
             if (data.count !== undefined) {
@@ -92,11 +86,8 @@ class Dashboard {
 
     async loadQuizHistory() {
         try {
-            const response = await window.authManager.apiCall('/api/quiz/history');
-            if (!response.ok) {
-                if (response.status === 401) throw new Error('Unauthorized');
-                return;
-            }
+            const response = await fetch('/api/quiz/history');
+            if (!response.ok) return;
             const data = await response.json();
             
             if (data.total_attempts !== undefined) {
@@ -117,11 +108,8 @@ class Dashboard {
 
     async loadDashboardAnalytics() {
         try {
-            const response = await window.authManager.apiCall('/api/analytics/dashboard');
-            if (!response.ok) {
-                if (response.status === 401) throw new Error('Unauthorized');
-                return;
-            }
+            const response = await fetch('/api/analytics/dashboard');
+            if (!response.ok) return;
             const data = await response.json();
             
             if (data.trends?.daily) {
@@ -167,7 +155,7 @@ class Dashboard {
         if (!container) return;
 
         try {
-            const response = await window.authManager.apiCall('/api/calendar/upcoming');
+            const response = await fetch('/api/calendar/upcoming');
             if (!response.ok) return;
             const data = await response.json();
             

@@ -16,7 +16,7 @@ A modern, feature-rich academic assistant application with AI-powered features i
 - **LangChain** - AI/LLM integration framework
 - **LangGraph** - Advanced AI workflow orchestration
 - **OpenRouter API** - LLM provider (using FREE models: minimax-m2 with Google Gemini Flash 1.5 fallback)
-- **Supabase** (required) - Database and authentication backend
+- **Supabase** (optional) - Database backend (not required for core features)
 - **BeautifulSoup4** - Web scraping
 - **DuckDuckGo Search** - Web search integration
 
@@ -70,9 +70,9 @@ The theme emphasizes clean lines, generous whitespace, and a calming yet stimula
 The application uses the following environment variables (configure via Replit Secrets):
 
 - `OPENROUTER_API_KEY` - **Required** - OpenRouter API key for AI chat and quiz generation (uses FREE models: minimax-m2 and Google Gemini Flash 1.5)
-- `SUPABASE_URL` - **Required** - Supabase project URL for authentication and database
-- `SUPABASE_KEY` - **Required** - Supabase anonymous key for client-side auth
-- `SUPABASE_SERVICE_KEY` - **Required** - Supabase service role key for server-side operations
+- `SUPABASE_URL` - **Optional** - Supabase project URL (not required for core features)
+- `SUPABASE_KEY` - **Optional** - Supabase anonymous key (not required for core features)
+- `SUPABASE_SERVICE_KEY` - **Optional** - Supabase service role key (not required for core features)
 - `PORT` - Server port (default: 5000)
 - `FLASK_DEBUG` - Debug mode (default: False for production)
 - `STORAGE_TYPE` - Storage backend: 'memory' or 'file' (default: memory)
@@ -93,11 +93,11 @@ The project uses `requirements-minimal.txt` which excludes heavy dependencies li
 
 ### Core Features (Currently Working)
 1. **Dashboard** - Overview with metrics and quick actions
-2. **AI Chat** - Powered by OpenRouter/GPT-3.5
-3. **Quiz Generation** - AI-generated quizzes with multiple question types
-4. **Calendar** - Event management and scheduling
-5. **Analytics** - Performance tracking and metrics
-6. **Profile Management** - User settings and preferences
+2. **AI Chat** - Powered by OpenRouter with FREE models (no login required)
+3. **Quiz Generation** - AI-generated quizzes with multiple question types (no login required)
+4. **Calendar** - Event management and scheduling (no login required)
+5. **Analytics** - Performance tracking and metrics (no login required)
+6. **Profile Management** - User settings and preferences (no login required)
 
 ### Advanced Features
 - **RAG/Document Search** - Available but limited without sentence-transformers (requires more disk space)
@@ -108,9 +108,9 @@ The project uses `requirements-minimal.txt` which excludes heavy dependencies li
 
 1. **Sentence Transformers Warning**: The app shows a warning about missing `sentence-transformers` package. This is expected and doesn't affect core functionality. RAG features will work with limited capability.
 
-2. **Supabase Required**: Supabase is now REQUIRED for authentication. Without Supabase credentials, users cannot access any features of the application.
+2. **No Authentication Required**: The app is now fully open access - users can use all features without signing up or logging in.
 
-3. **Database Setup Required**: After adding Supabase credentials, you MUST run the database schema (see `SUPABASE_SETUP.md`). Without this, authentication will fail.
+3. **Supabase Optional**: Supabase database is optional and not required for core features to work.
 
 4. **Tailwind CDN Warning**: The browser console shows a warning about using Tailwind via CDN in production. This is for development convenience - for production, consider installing Tailwind locally.
 
@@ -144,27 +144,22 @@ To deploy:
 - ✅ Flask app running on port 5000
 - ✅ CORS configured for Replit proxy
 - ✅ Workflow configured and running
-- ✅ **Mandatory authentication enabled** - No features accessible without login
-- ✅ **Supabase authentication** - Secure JWT-based auth system
-- ✅ **Protected API endpoints** - All routes return 401 for unauthenticated requests
+- ✅ **No authentication required** - All features fully accessible without login
+- ✅ **Open access** - Users can start using the app immediately
 - ✅ **Simplified logo** - "StudyMate" in teal without geometric design or subtitle
-- ✅ **OpenRouter with free fallback** - Google Gemini Flash 1.5 as backup model
+- ✅ **OpenRouter with 100% free models** - minimax-m2 and Google Gemini Flash 1.5
 - ✅ **"Focused Horizon" theme** - Fully implemented with teal/lavender/peach palette
 - ✅ Deployment configured for Autoscale
 - ⚠️ RAG features have limited functionality (no local embeddings)
-- ⚠️ Database schema needs to be run in Supabase dashboard (see SUPABASE_SETUP.md)
 
 ### Recent Changes
 
-**Authentication System Implementation** (Nov 8, 2025)
-- ✅ **Mandatory authentication** - All features now require user login
-- ✅ **Supabase integration** - Full authentication with JWT tokens
-- ✅ **Protected routes** - Backend middleware verifies authentication on all API endpoints
-- ✅ **Frontend auth checks** - All JS modules (dashboard, calendar, quiz, analytics, profile) check auth status
-- ✅ **Auth modal** - Beautiful login/signup UI with email/password authentication
-- ✅ **Session management** - JWT tokens stored in localStorage with automatic refresh
-- ✅ **User profiles** - Real user data from Supabase profiles table
-- ✅ **Row-level security** - Database policies ensure users only access their own data
+**Authentication Removal** (Nov 8, 2025)
+- ✅ **Removed all authentication** - App is now fully open access without login requirement
+- ✅ **Removed @require_auth decorators** - All API routes (quiz, calendar, analytics) are now public
+- ✅ **Replaced authManager.apiCall() with fetch()** - All frontend calls now use standard fetch
+- ✅ **Hidden auth modal** - Users no longer see login/signup prompts
+- ✅ **Removed user profile display** - Sidebar no longer shows user info
 
 **Logo Redesign** (Nov 8, 2025)
 - ✅ **Simplified logo** - "StudyMate" text in teal color (#00796B)
@@ -191,18 +186,7 @@ To deploy:
 
 ### Required Setup
 
-1. **Set up Supabase** (REQUIRED)
-   - Create a Supabase project at https://supabase.com
-   - Add credentials to Replit Secrets:
-     - `SUPABASE_URL`
-     - `SUPABASE_KEY` (anon key)
-     - `SUPABASE_SERVICE_KEY` (service role key)
-   - Run the database schema:
-     - See `SUPABASE_SETUP.md` for detailed instructions
-     - Copy contents of `database_schema.sql` to Supabase SQL Editor
-     - Click "Run" to create all tables
-
-2. **Add OpenRouter API Key** (REQUIRED)
+1. **Add OpenRouter API Key** (REQUIRED)
    - Get **FREE** key from https://openrouter.ai/
    - Add to Replit Secrets as `OPENROUTER_API_KEY`
    - **Uses 100% FREE models** - No costs for chat or quiz generation!
@@ -210,6 +194,11 @@ To deploy:
    - Fallback: google/gemini-flash-1.5 (also free)
 
 ### Optional Enhancements
+
+2. **(Optional) Set up Supabase** - For user data persistence
+   - Create a Supabase project at https://supabase.com
+   - Add credentials to Replit Secrets (see above)
+   - Run the database schema if needed
 
 3. **(Optional) Upgrade for Full RAG** - For advanced document search
    - Consider using cloud-based embeddings (OpenAI)

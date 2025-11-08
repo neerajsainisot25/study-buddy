@@ -59,7 +59,7 @@ class Quiz {
         this.showLoading();
 
         try {
-            const response = await window.authManager.apiCall('/api/quiz/generate', {
+            const response = await fetch('/api/quiz/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -82,10 +82,6 @@ class Quiz {
                 this.userAnswers = new Array(this.currentQuestions.length).fill(null);
                 this.currentQuestionIndex = 0;
                 this.showPreview();
-            } else if (response.status === 401) {
-                showAuthModal();
-                this.showSetup();
-            } else {
                 alert('Error: ' + (data.error || 'Failed to generate quiz'));
                 this.showSetup();
             }
@@ -330,7 +326,7 @@ class Quiz {
         const timeTaken = this.getTimeTaken();
 
         try {
-            const response = await window.authManager.apiCall('/api/quiz/submit', {
+            const response = await fetch('/api/quiz/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -455,11 +451,8 @@ class Quiz {
 
     async loadHistory() {
         try {
-            const response = await window.authManager.apiCall('/api/quiz/history');
+            const response = await fetch('/api/quiz/history');
             if (!response.ok) {
-                if (response.status === 401) {
-                    showAuthModal();
-                }
                 return;
             }
             const data = await response.json();

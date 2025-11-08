@@ -7,21 +7,26 @@ from datetime import datetime, timedelta
 analytics_supabase_bp = Blueprint('analytics_supabase', __name__)
 
 @analytics_supabase_bp.route('/dashboard', methods=['GET'])
-@require_auth
 def get_dashboard_analytics():
-    """Get comprehensive analytics for dashboard from Supabase"""
-    user_id = request.user_id
-    
+    """Get comprehensive analytics for dashboard (no auth required)"""
+    # No authentication required - return mock/empty data
     try:
         if not supabase_service.is_available():
-            return jsonify({"error": "Database not available"}), 500
+            # Return empty analytics when DB not available
+            return jsonify({
+                'quiz': {'total_attempts': 0, 'total_quizzes': 0, 'today_attempts': 0, 'week_attempts': 0, 'average_score': 0, 'today_avg_score': 0, 'by_difficulty': {}, 'by_type': {}, 'recent_attempts': []},
+                'chat': {'total_queries': 0, 'today_queries': 0, 'week_queries': 0, 'active_sessions': 0},
+                'tasks': {'completed': {'quizzes': 0, 'events': 0, 'chats': 0}, 'total': 0},
+                'activity': {'recent': [], 'last_updated': datetime.now().isoformat()},
+                'trends': {'daily': []}
+            })
         
-        # Get all user data
-        quiz_attempts_response = supabase_service.client.table('quiz_attempts').select('*').eq('user_id', user_id).execute()
-        quizzes_response = supabase_service.client.table('quizzes').select('*').eq('user_id', user_id).execute()
-        events_response = supabase_service.client.table('events').select('*').eq('user_id', user_id).execute()
-        conversations_response = supabase_service.client.table('conversations').select('*').eq('user_id', user_id).execute()
-        messages_response = supabase_service.client.table('messages').select('*').eq('user_id', user_id).eq('role', 'user').execute()
+        # Get all data (no user filtering since no auth)
+        quiz_attempts_response = supabase_service.client.table('quiz_attempts').select('*').limit(100).execute()
+        quizzes_response = supabase_service.client.table('quizzes').select('*').limit(100).execute()
+        events_response = supabase_service.client.table('events').select('*').limit(100).execute()
+        conversations_response = supabase_service.client.table('conversations').select('*').limit(100).execute()
+        messages_response = supabase_service.client.table('messages').select('*').eq('role', 'user').limit(100).execute()
         
         quiz_attempts = quiz_attempts_response.data if quiz_attempts_response.data else []
         quizzes = quizzes_response.data if quizzes_response.data else []
