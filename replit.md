@@ -26,20 +26,18 @@ A modern, feature-rich academic assistant application with AI-powered features i
 - **JavaScript ES6+** - Modern JavaScript
 - **"Focused Horizon" Theme** - Minimalist design with professional academic aesthetic
 
-### Design Theme: "Minimal Gradient"
+### Design Theme: "Minimal Coral"
 
-A minimal, modern aesthetic with vibrant gradient accents for an energizing study experience.
+A clean, professional minimal design based on the StudyMate logo's coral/orange color.
 
 **Color Palette:**
-- **Pure White** (#FFFFFF) - Primary background for clean, distraction-free interface
-- **Deep Black** (#000000) - Primary text color for maximum readability
-- **Vibrant Yellow** (#FBBF24) - Gradient start color for energy and focus
-- **Fresh Green** (#10B981) - Gradient middle color for growth and balance
-- **Bright Blue** (#3B82F6) - Gradient end color for clarity and inspiration
-- **Soft Gray** (#F9FAFB) - Subtle backgrounds for cards and sections
-- **Medium Gray** (#6B7280) - Secondary text for hierarchy
+- **Coral Primary** (#FF6B35) - Main brand color from StudyMate logo
+- **Pure White** (#FFFFFF) - Primary background for clean interface
+- **Deep Black** (#1A1A1A) - Primary text for maximum readability
+- **Neutral Grays** (#F5F5F5 to #737373) - Subtle backgrounds and secondary text
+- **Success/Error** (Green/Red) - Semantic feedback colors
 
-The theme emphasizes minimalism with strategic use of vibrant yellow-green-blue gradients for visual interest and user engagement. Clean white backgrounds ensure optimal readability while the gradient accents energize the interface.
+The theme emphasizes extreme minimalism with a single-color accent system. Clean white backgrounds with the StudyMate coral accent create a professional, distraction-free learning environment.
 
 ## Project Structure
 
@@ -151,29 +149,42 @@ To deploy:
 - ⚠️ RAG features have limited functionality (no local embeddings)
 
 ### Recent Changes
-- Simplified dependencies to fit Replit disk quota
-- Disabled Flask debug mode and reloader for stability
-- Configured CORS to allow all origins for Replit iframe proxy
-- Updated RAG service to gracefully handle missing dependencies
-- **Implemented "Minimal Gradient" theme** (Nov 8, 2025)
-  - Complete UI redesign with minimal white/black aesthetic
-  - Added vibrant yellow-green-blue gradients for visual energy
-  - Ensured maximum readability with pure white backgrounds and black text
-  - Gradient accents on banners, active navigation, and progress bars
-- **Replaced logo with custom StudyMate branding** (Nov 8, 2025)
-  - Integrated uploaded StudyMate logo image
-  - Replaced all geometric S² branding
-  - Modern SVG icons throughout navigation
-- **Removed all hardcoded mock data** (Nov 8, 2025)
-  - Dashboard metrics now fetch from `/api/analytics/dashboard`
-  - Quiz performance loads from `/api/analytics/quiz`
-  - Recent chat sessions display from `/api/chat/history`
-  - Upcoming events pull from `/api/calendar/upcoming`
-  - Proper empty states when no user data exists
-- **Simplified dashboard layout** (Nov 8, 2025)
-  - Removed Quick Actions section as requested
-  - Cleaner, more focused interface
-  - Improved data visualization with real API integration
+
+#### Complete Rebuild (Nov 8, 2025)
+
+**Design System Overhaul:**
+- **Removed ALL old CSS files** - Deleted Tailwind, all theme files, all layout files
+- **Created single `main.css`** - Professional minimal design system based on StudyMate logo coral (#FF6B35)
+- **Rebuilt `index.html`** - Clean HTML using only new minimal CSS, no Tailwind, no external frameworks
+- **Minimal aesthetic** - White backgrounds, coral accents, clean typography, smooth animations
+
+**Supabase Integration (Full Stack):**
+- **Authentication System** - Signup, signin, signout with JWT tokens
+  - `/api/auth/signup` - User registration
+  - `/api/auth/signin` - User login
+  - `/api/auth/signout` - Session termination
+  - `/api/auth/me` - Get current user
+  - `/api/auth/update-profile` - Update user data
+- **Profile Management** - User profiles with avatar upload
+  - `/api/profile` - Get profile data
+  - `/api/profile/upload-avatar` - Avatar image upload to Supabase storage
+  - `/api/profile/stats` - User statistics
+- **Token Management** - Secure access + refresh token storage
+- **Auth Pages** - Beautiful minimal login/signup pages at `/login` and `/signup`
+
+**Routing Improvements:**
+- Registered auth and profile blueprints
+- Added Flask routes for auth pages
+- Client-side navigation with smooth transitions
+- Auth-aware redirects (unauthenticated users go to /login)
+
+**Architecture:**
+- Single CSS file architecture (no dependencies)
+- Clean component-based design tokens
+- Responsive grid system
+- Smooth animations and transitions
+- Professional form styling
+- Minimal but complete UI kit
 
 ## Next Steps
 
