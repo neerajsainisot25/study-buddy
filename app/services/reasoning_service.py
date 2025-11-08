@@ -1,9 +1,58 @@
 """Advanced reasoning service with multi-layer thinking"""
 from app.services.llm_service import LLMService
+import re
 from typing import List, Dict
 
 class ReasoningService:
     """Service for multi-layer reasoning and chain-of-thought processing"""
+    
+    # Universal Chain-of-Thought System Prompt
+    COT_SYSTEM_MESSAGE = """You are an expert reasoning engine operating in "Thinking" mode. You MUST follow a structured three-phase thought process for ALL queries. Enclose ALL your internal reasoning within <thinking> tags. Only content outside these tags will be shown to the user.
+
+🧠 UNIVERSAL CHAIN-OF-THOUGHT PROCESS (MANDATORY):
+
+Phase 1: 🧐 ANALYSIS (Mandatory Internal Review)
+Before generating any output, you MUST perform this internal assessment:
+
+1. Deconstruct User Intent: What is the core question, and what are the explicit/implicit constraints (e.g., length, format, tone)?
+2. Identify Resources: Which capabilities are active and relevant (RAG/Knowledge Base, Web Search, internal knowledge)?
+3. Determine Difficulty: Classify the task as:
+   - Simple: Single step, direct answer
+   - Moderate: 2-3 steps, no conflict resolution needed
+   - Complex: Multi-step, requires synthesis or conflict resolution
+   
+   If the task is Complex, a structured CoT is mandatory.
+
+Phase 2: 🗺️ PLANNING (The Chain of Thought)
+For all Moderate or Complex tasks, create a numbered, sequential list of logical steps:
+
+1. Decompose the Problem: Break the main goal into the smallest, self-contained sub-steps.
+2. Establish Data Flow: Explicitly state how the output of one step will be used as input for the next (e.g., "Use the eligibility status from Step 1 to gate the calculation in Step 2").
+3. Enforce Unit/Concept Consistency: If units (currency, time, measurement) or concepts are mixed, create an explicit sub-step to reconcile them (e.g., convert annual to monthly, or define the key term).
+
+Phase 3: ✅ EXECUTION & VERIFICATION
+Execute the plan from Phase 2. Once the final answer is reached, perform a final self-critique:
+
+1. Logical Verification: Check the conclusion against the initial premises (e.g., "Does the final calculated result align with the stated rules?").
+2. Constraint Review: Confirm the final output satisfies all user constraints (format, length, source citation, etc.).
+3. Synthesize Final Answer: Present the final, correct answer clearly.
+
+FORMAT REQUIREMENTS:
+<thinking>
+Phase 1: ANALYSIS
+- User Intent: [Your analysis]
+- Resources: [Active capabilities]
+- Difficulty: [Simple/Moderate/Complex]
+
+Phase 2: PLANNING
+[Numbered steps for Moderate/Complex tasks]
+
+Phase 3: EXECUTION & VERIFICATION
+[Your execution steps]
+[Your verification checks]
+</thinking>
+
+[Your final answer here - this will be shown to the user. Do NOT expose internal reasoning steps unless explicitly requested.]"""
     
     @staticmethod
     def deep_reasoning(question: str, conversation_history: List[Dict]) -> Dict[str, any]:
@@ -135,6 +184,90 @@ FINAL ANSWER:
             ],
             'final_answer': final_answer
         }
+    
+    @staticmethod
+    def cot_reasoning(question: str, conversation_history: List[Dict], use_system_message: bool = True) -> Dict[str, any]:
+        """
+        Perform Chain of Thought reasoning using system message approach
+        
+        Args:
+            question: The question to reason about
+            conversation_history: Previous conversation messages
+            use_system_message: Whether to use the CoT system message
+            
+        Returns:
+            Dict with 'thinking' (internal reasoning) and 'answer' (final answer)
+        """
+        # Build messages with system message if enabled
+        messages = []
+        if use_system_message:
+            messages.append({"role": "system", "content": ReasoningService.COT_SYSTEM_MESSAGE})
+        
+        # Add conversation history
+        messages.extend(conversation_history)
+        
+        # Add the current question
+        messages.append({"role": "user", "content": question})
+        
+        # Get response from LLM
+        response = LLMService.call_llm(messages)
+        
+        # Parse response to extract thinking and answer
+        thinking, answer = ReasoningService._parse_cot_response(response)
+        
+        # If no thinking was found, try to extract it differently
+        if not thinking and use_system_message:
+            # Fallback: treat entire response as answer if no tags found
+            answer = response.strip()
+            thinking = "Reasoning process was not explicitly formatted, but the model processed the question."
+        
+        return {
+            'thinking': thinking,
+            'answer': answer,
+            'raw_response': response
+        }
+    
+    @staticmethod
+    def _parse_cot_response(response: str) -> tuple:
+        """
+        Parse CoT response to extract thinking (inside tags) and answer (outside tags)
+        Handles the three-phase structure: Analysis, Planning, Execution & Verification
+        
+        Returns:
+            Tuple of (thinking, answer)
+        """
+        # Pattern to match <thinking>...</thinking> tags
+        thinking_pattern = r'<thinking>(.*?)</thinking>'
+        
+        # Find all thinking blocks
+        thinking_matches = re.findall(thinking_pattern, response, re.DOTALL | re.IGNORECASE)
+        
+        # Combine all thinking blocks
+        thinking = '\n\n'.join([match.strip() for match in thinking_matches])
+        
+        # Remove thinking tags from response to get the answer
+        answer = re.sub(thinking_pattern, '', response, flags=re.DOTALL | re.IGNORECASE).strip()
+        
+        # Clean up extra whitespace
+        answer = re.sub(r'\n\s*\n+', '\n\n', answer).strip()
+        
+        # If answer is empty or very short, it might all be in thinking tags
+        # In that case, try to extract a summary or conclusion from thinking
+        if not answer or len(answer) < 50:
+            # Look for common conclusion markers in thinking
+            conclusion_patterns = [
+                r'Final Answer[:\s]+(.*?)(?:\n|$)',
+                r'Conclusion[:\s]+(.*?)(?:\n|$)',
+                r'Answer[:\s]+(.*?)(?:\n|$)',
+                r'Therefore[,\s]+(.*?)(?:\n|$)',
+            ]
+            for pattern in conclusion_patterns:
+                match = re.search(pattern, thinking, re.IGNORECASE | re.DOTALL)
+                if match:
+                    answer = match.group(1).strip()
+                    break
+        
+        return thinking, answer
     
     @staticmethod
     def _extract_layer(response: str, layer_marker: str) -> str:

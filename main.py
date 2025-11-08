@@ -1,9 +1,9 @@
-"""Main entry point for the application"""
+"""Main entry point for the Flask application"""
 from app import create_app
 from app.config import Config
 import socket
 
-def find_free_port(start_port=5001, max_attempts=10):
+def find_free_port(start_port=5000, max_attempts=10):
     """Find a free port starting from start_port"""
     for port in range(start_port, start_port + max_attempts):
         try:

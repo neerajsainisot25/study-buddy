@@ -1,0 +1,29 @@
+<!-- File Upload Modal -->
+<div id="fileUploadModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Manage Knowledge Base Files</h2>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div class="file-upload-zone" id="fileUploadZone">
+            <div style="font-size: 40px; margin-bottom: 12px;">📄</div>
+            <div style="color: var(--text); font-weight: 500; margin-bottom: 4px;">Click to select files or drag and drop</div>
+            <div style="color: var(--text-secondary); font-size: 12px;">Supports: .txt, .pdf, .docx, .md</div>
+            <input type="file" id="fileInput" multiple accept=".txt,.pdf,.docx,.md" style="display: none;">
+        </div>
+        <div style="margin: 20px 0; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+            <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Uploaded Files</div>
+            <div class="file-list" id="fileList"></div>
+        </div>
+        <div id="uploadProgress" class="hidden" style="margin-top: 20px;">
+            <div style="width: 100%; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; margin-bottom: 10px;">
+                <div id="progressFill" style="height: 100%; background: var(--primary); width: 0%; transition: width 0.3s;"></div>
+            </div>
+            <div id="uploadStatus" style="text-align: center; font-size: 12px; color: var(--text-secondary);">Uploading...</div>
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px;">
+            <button class="btn btn-secondary" id="cancelUpload">Cancel</button>
+            <button class="btn btn-primary" id="uploadFiles">Upload Files</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<div id="profilePage" class="page-content">
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title">Profile Settings</h3>
+        </div>
+        
+        <div style="display: flex; gap: 32px; align-items: flex-start;">
+            <!-- Profile Avatar -->
+            <div style="text-align: center;">
+                <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: 700; margin-bottom: 16px;">
+                    AJ
+                </div>
+                <button class="btn btn-secondary btn-small">Change Photo</button>
+            </div>
+            
+            <!-- Profile Form -->
+            <div style="flex: 1;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="profileName" value="Alex Johnson" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="profileEmail" value="alex.johnson@example.com" />
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Grade Level</label>
+                        <select id="profileGrade" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px;">
+                            <option>9th Grade</option>
+                            <option>10th Grade</option>
+                            <option selected>11th Grade</option>
+                            <option>12th Grade</option>
+                            <option>College</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Study Goal (hours/week)</label>
+                        <input type="number" id="profileGoal" value="20" min="1" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="profileBio" rows="3" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; resize: vertical;">Passionate about learning and achieving academic excellence.</textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preferences -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title">Preferences</h3>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <label class="capability-toggle" style="justify-content: space-between; padding: 12px 16px;">
+                <span>Email Notifications</span>
+                <input type="checkbox" checked />
+            </label>
+            
+            <label class="capability-toggle" style="justify-content: space-between; padding: 12px 16px;">
+                <span>Study Reminders</span>
+                <input type="checkbox" checked />
+            </label>
+            
+            <label class="capability-toggle" style="justify-content: space-between; padding: 12px 16px;">
+                <span>Dark Mode</span>
+                <input type="checkbox" id="darkModeToggle" />
+            </label>
+            
+            <label class="capability-toggle" style="justify-content: space-between; padding: 12px 16px;">
+                <span>Show Performance Stats</span>
+                <input type="checkbox" checked />
+            </label>
+        </div>
+    </div>
+    
+    <!-- Account Stats -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title">Account Statistics</h3>
+        </div>
+        
+        <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary); margin-bottom: 8px;" id="profileDaysActive">45</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Days Active</div>
+            </div>
+            
+            <div style="text-align: center; padding: 20px; border-left: 1px solid var(--border); border-right: 1px solid var(--border);">
+                <div style="font-size: 32px; font-weight: 700; color: var(--success); margin-bottom: 8px;" id="profileTotalQuizzes">24</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Quizzes Completed</div>
+            </div>
+            
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 32px; font-weight: 700; color: var(--accent); margin-bottom: 8px;" id="profileStudyHours">42</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Study Hours</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Danger Zone -->
+    <div class="section-card" style="border: 1px solid var(--error);">
+        <div class="section-header">
+            <h3 class="section-title" style="color: var(--error);">Danger Zone</h3>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">Delete Account</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">Permanently delete your account and all data</div>
+            </div>
+            <button class="btn" style="background: var(--error); color: white; border-color: var(--error);" onclick="deleteAccount()">Delete Account</button>
+        </div>
+    </div>
+</div>

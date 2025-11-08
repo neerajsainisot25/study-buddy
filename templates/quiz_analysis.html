@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Analysis - {{ config.APP_NAME }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 p-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+            <a href="/quiz/list" class="text-blue-600 hover:text-blue-700">← Back to Quiz History</a>
+            <h1 class="text-2xl font-bold text-gray-900 mt-2">{{ quiz_topic }}</h1>
+            <p class="text-gray-600">Quiz Analysis</p>
+        </div>
+
+        <!-- Score Summary -->
+        <div class="bg-white p-6 rounded-lg shadow text-center mb-6">
+            <div class="text-4xl font-bold mb-2" id="score-display">{{ "%.1f"|format(attempt.score) }}%</div>
+            <p class="text-gray-600 mb-2">{{ attempt.correct }} out of {{ attempt.total }} correct</p>
+            {% if attempt.time_taken %}
+            <p class="text-sm text-gray-500">
+                Time taken: {{ (attempt.time_taken // 60) }}m {{ (attempt.time_taken % 60) }}s
+            </p>
+            {% endif %}
+        </div>
+        
+        <!-- Detailed Results -->
+        <div id="results-details" class="space-y-4">
+            {% for item in results %}
+            <div class="bg-white p-6 rounded-lg shadow {{ 'border-l-4 border-green-500' if item.is_correct else 'border-l-4 border-red-500' }}">
+                <div class="mb-2">
+                    <span class="text-sm font-medium {{ 'text-green-600' if item.is_correct else 'text-red-600' }}">
+                        Question {{ loop.index }} - {{ 'Correct' if item.is_correct else 'Incorrect' }}
+                    </span>
+                    <p class="text-lg font-semibold mt-2">{{ item.question }}</p>
+                </div>
+                <div class="space-y-2 mb-4">
+                    {% for opt in item.options %}
+                    <div class="p-2 border rounded {% if loop.index0 == item.correct_answer %}bg-green-50 border-green-300{% elif loop.index0 == item.user_answer and not item.is_correct %}bg-red-50 border-red-300{% endif %}">
+                        {{ opt }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="text-sm font-medium text-gray-700">Explanation:</p>
+                    <p class="text-sm text-gray-600 mt-1">{{ item.explanation }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="flex gap-2 mt-6 justify-center">
+            <a 
+                href="/quiz/list"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                Back to Quizzes
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

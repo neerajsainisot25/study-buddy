@@ -142,4 +142,27 @@ class RAGService:
     def is_ready(self) -> bool:
         """Check if RAG system is ready"""
         return self.retriever is not None and self.embeddings is not None
+    
+    def get_document_count(self) -> int:
+        """Get the number of documents in the vectorstore"""
+        if self.vectorstore is None:
+            return 0
+        try:
+            # FAISS vectorstore has a method to get document count
+            # We can use the index size or search with a dummy query
+            # The most reliable way is to check the index directly
+            if hasattr(self.vectorstore, 'index'):
+                return self.vectorstore.index.ntotal
+            # Fallback: try to get from retriever
+            if self.retriever:
+                # Search with empty query to get all (not ideal but works)
+                try:
+                    docs = self.retriever.get_relevant_documents("")
+                    return len(docs) if docs else 0
+                except:
+                    return 0
+            return 0
+        except Exception as e:
+            print(f"Error getting document count: {e}")
+            return 0
 

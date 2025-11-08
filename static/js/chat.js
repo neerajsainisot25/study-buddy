@@ -10,10 +10,15 @@ class Chat {
         this.input = null;
         this.sendButton = null;
         this.clearButton = null;
-        this.modeSelect = null;
         this.modeDescription = null;
         this.ragStatus = null;
-        this.currentMode = 'normal';
+        this.selectedFiles = [];
+        this.capabilities = {
+            rag: true,
+            web_search: false,
+            research: false,
+            thinking: false
+        };
     }
 
     init() {
@@ -21,13 +26,14 @@ class Chat {
         this.input = document.getElementById('chatInput');
         this.sendButton = document.getElementById('sendButton');
         this.clearButton = document.getElementById('clearButton');
-        this.modeSelect = document.getElementById('chatMode');
         this.modeDescription = document.getElementById('modeDescription');
         this.ragStatus = document.getElementById('ragStatus');
 
         if (!this.messagesContainer || !this.input) return;
 
         this.setupEventListeners();
+        this.setupFileUpload();
+        this.setupCapabilityToggles();
         this.addWelcomeMessage();
         this.updateModeDescription();
         this.checkRAGStatus();
@@ -40,12 +46,6 @@ class Chat {
         if (this.clearButton) {
             this.clearButton.addEventListener('click', () => this.clearChat());
         }
-        if (this.modeSelect) {
-            this.modeSelect.addEventListener('change', (e) => {
-                this.currentMode = e.target.value;
-                this.updateModeDescription();
-            });
-        }
         if (this.input) {
             this.input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !this.sendButton.disabled) {
@@ -56,17 +56,237 @@ class Chat {
         }
     }
 
+    setupCapabilityToggles() {
+        const toggles = document.querySelectorAll('.capability-toggle input[type="checkbox"]');
+        toggles.forEach(toggle => {
+            const capability = toggle.getAttribute('data-capability');
+            toggle.checked = this.capabilities[capability] || false;
+            this.updateToggleStyle(toggle);
+            
+            toggle.addEventListener('change', (e) => {
+                this.capabilities[capability] = e.target.checked;
+                this.updateToggleStyle(e.target);
+                this.updateModeDescription();
+            });
+        });
+    }
+
+    updateToggleStyle(checkbox) {
+        const label = checkbox.closest('.capability-toggle');
+        if (checkbox.checked) {
+            label.classList.add('active');
+        } else {
+            label.classList.remove('active');
+        }
+    }
+
+    setupFileUpload() {
+        const modal = document.getElementById('fileUploadModal');
+        const addFilesButton = document.getElementById('addFilesButton');
+        const closeModal = document.getElementById('closeModal');
+        const fileInput = document.getElementById('fileInput');
+        const fileUploadZone = document.getElementById('fileUploadZone');
+        const fileList = document.getElementById('fileList');
+        const uploadFilesButton = document.getElementById('uploadFiles');
+        const cancelUpload = document.getElementById('cancelUpload');
+
+        // Open modal
+        if (addFilesButton) {
+            addFilesButton.addEventListener('click', () => {
+                modal.classList.add('active');
+                if (typeof loadFileList === 'function') {
+                    loadFileList();
+                }
+            });
+        }
+
+        // Close modal
+        const closeModalFunc = () => {
+            modal.classList.remove('active');
+            this.selectedFiles = [];
+            this.updateFileList();
+        };
+
+        if (closeModal) {
+            closeModal.addEventListener('click', closeModalFunc);
+        }
+
+        if (cancelUpload) {
+            cancelUpload.addEventListener('click', closeModalFunc);
+        }
+
+        // Click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalFunc();
+            }
+        });
+
+        // File input change
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                this.handleFileSelection(Array.from(e.target.files));
+            });
+        }
+
+        // Drag and drop
+        if (fileUploadZone) {
+            fileUploadZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileUploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadZone.classList.add('dragover');
+            });
+
+            fileUploadZone.addEventListener('dragleave', () => {
+                fileUploadZone.classList.remove('dragover');
+            });
+
+            fileUploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadZone.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                this.handleFileSelection(files);
+            });
+        }
+
+        // Upload files
+        if (uploadFilesButton) {
+            uploadFilesButton.addEventListener('click', () => {
+                this.uploadFiles();
+            });
+        }
+    }
+
+    handleFileSelection(files) {
+        const allowedExtensions = ['.txt', '.pdf', '.docx', '.md'];
+        const validFiles = files.filter(file => {
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            return allowedExtensions.includes(ext);
+        });
+
+        validFiles.forEach(file => {
+            if (!this.selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+                this.selectedFiles.push(file);
+            }
+        });
+
+        this.updateFileList();
+    }
+
+    updateFileList() {
+        const fileList = document.getElementById('fileList');
+        if (!fileList) return;
+
+        fileList.innerHTML = '';
+
+        this.selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileSize = (file.size / 1024).toFixed(2) + ' KB';
+            
+            fileItem.innerHTML = `
+                <div class="file-item-info">
+                    <span class="file-item-name">${this.escapeHtml(file.name)}</span>
+                    <span class="file-item-size">${fileSize}</span>
+                </div>
+                <button class="file-item-remove" data-index="${index}">&times;</button>
+            `;
+
+            const removeButton = fileItem.querySelector('.file-item-remove');
+            removeButton.addEventListener('click', () => {
+                this.selectedFiles.splice(index, 1);
+                this.updateFileList();
+            });
+
+            fileList.appendChild(fileItem);
+        });
+    }
+
+    async uploadFiles() {
+        if (this.selectedFiles.length === 0) {
+            alert('Please select at least one file to upload.');
+            return;
+        }
+
+        const uploadProgress = document.getElementById('uploadProgress');
+        const progressFill = document.getElementById('progressFill');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const uploadFilesButton = document.getElementById('uploadFiles');
+
+        uploadProgress.classList.add('active');
+        uploadFilesButton.disabled = true;
+
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (let i = 0; i < this.selectedFiles.length; i++) {
+            const file = this.selectedFiles[i];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const progress = ((i + 1) / this.selectedFiles.length) * 100;
+            progressFill.style.width = progress + '%';
+            uploadStatus.textContent = `Uploading ${file.name}... (${i + 1}/${this.selectedFiles.length})`;
+
+            try {
+                const response = await fetch('/api/rag/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                    console.error(`Error uploading ${file.name}:`, data.error);
+                }
+            } catch (error) {
+                errorCount++;
+                console.error(`Error uploading ${file.name}:`, error);
+            }
+        }
+
+        uploadStatus.textContent = `Upload complete: ${successCount} successful, ${errorCount} failed`;
+        progressFill.style.width = '100%';
+
+        setTimeout(() => {
+            uploadProgress.classList.remove('active');
+            uploadFilesButton.disabled = false;
+            
+            if (successCount > 0) {
+                this.selectedFiles = [];
+                this.updateFileList();
+                this.checkRAGStatus();
+                if (typeof loadDashboardStats === 'function') {
+                    loadDashboardStats();
+                }
+                if (typeof loadFileList === 'function') {
+                    loadFileList();
+                }
+                document.getElementById('fileUploadModal').classList.remove('active');
+            }
+        }, 2000);
+    }
+
     updateModeDescription() {
         if (!this.modeDescription) return;
         
-        const descriptions = {
-            'normal': 'Standard conversation (auto-enhanced with knowledge base if available)',
-            'thinking': 'Multi-layer deep reasoning (enhanced with knowledge base)',
-            'research': 'Searches the web and synthesizes information',
-            'rag': 'Fully RAG-powered: Uses knowledge base documents for answers'
-        };
-        
-        this.modeDescription.textContent = descriptions[this.currentMode] || descriptions['normal'];
+        const activeCapabilities = [];
+        if (this.capabilities.rag) activeCapabilities.push('RAG');
+        if (this.capabilities.web_search) activeCapabilities.push('Web Search');
+        if (this.capabilities.research) activeCapabilities.push('Research');
+        if (this.capabilities.thinking) activeCapabilities.push('Thinking');
+
+        if (activeCapabilities.length === 0) {
+            this.modeDescription.textContent = 'No capabilities selected. Enable at least one capability.';
+        } else {
+            this.modeDescription.textContent = `Active: ${activeCapabilities.join(', ')}`;
+        }
     }
 
     async checkRAGStatus() {
@@ -75,6 +295,11 @@ class Chat {
             const data = await response.json();
             if (data.ready && this.ragStatus) {
                 this.ragStatus.style.display = 'inline';
+                if (data.document_count !== undefined) {
+                    this.ragStatus.textContent = `📚 KB Ready (${data.document_count} docs)`;
+                } else {
+                    this.ragStatus.textContent = '📚 KB Ready';
+                }
             } else if (this.ragStatus) {
                 this.ragStatus.style.display = 'none';
             }
@@ -100,33 +325,28 @@ class Chat {
         if (thinkingLayers && thinkingLayers.length > 0 && !isUser) {
             const thinkingContainer = document.createElement('div');
             thinkingContainer.className = 'thinking-container';
-            thinkingContainer.style.cssText = 'margin-bottom: 16px;';
             
             const header = document.createElement('div');
-            header.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 16px; border-radius: 8px 8px 0 0; font-weight: 600; font-size: 14px;';
-            header.textContent = '🧠 Multi-Layer Reasoning Process';
+            header.className = 'thinking-header';
+            header.textContent = '🧠 Chain of Thought Reasoning';
             thinkingContainer.appendChild(header);
             
             const layersDiv = document.createElement('div');
-            layersDiv.style.cssText = 'background: #f8f9fa; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 8px 8px; padding: 16px;';
+            layersDiv.className = 'thinking-layers';
             
             thinkingLayers.forEach((layer, index) => {
                 const layerDiv = document.createElement('div');
-                layerDiv.style.cssText = `margin-bottom: ${index < thinkingLayers.length - 1 ? '20px' : '0'}; padding-bottom: ${index < thinkingLayers.length - 1 ? '20px' : '0'}; border-bottom: ${index < thinkingLayers.length - 1 ? '2px solid #e0e0e0' : 'none'};`;
+                layerDiv.className = 'thinking-layer';
                 
                 const layerHeader = document.createElement('div');
-                layerHeader.style.cssText = 'display: flex; align-items: center; margin-bottom: 10px;';
+                layerHeader.className = 'layer-header';
                 layerHeader.innerHTML = `
-                    <div style="background: #667eea; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; margin-right: 10px;">
-                        ${layer.number}
-                    </div>
-                    <div style="font-weight: 600; color: #333; font-size: 15px;">
-                        ${this.escapeHtml(layer.name)}
-                    </div>
+                    <div class="layer-number">${layer.number}</div>
+                    <div class="layer-name">${this.escapeHtml(layer.name)}</div>
                 `;
                 
                 const layerContent = document.createElement('div');
-                layerContent.style.cssText = 'background: white; padding: 12px; border-radius: 6px; margin-top: 8px; border-left: 3px solid #667eea; color: #555; white-space: pre-wrap; font-size: 14px; line-height: 1.6;';
+                layerContent.className = 'layer-content';
                 layerContent.textContent = layer.reasoning;
                 
                 layerDiv.appendChild(layerHeader);
@@ -228,7 +448,10 @@ class Chat {
                 body: JSON.stringify({
                     question: message,
                     session_id: this.sessionId,
-                    mode: this.currentMode
+                    use_rag: this.capabilities.rag,
+                    use_web_search: this.capabilities.web_search,
+                    use_research: this.capabilities.research,
+                    use_thinking: this.capabilities.thinking
                 })
             });
 

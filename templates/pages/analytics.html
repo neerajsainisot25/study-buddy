@@ -1,0 +1,122 @@
+<div id="analyticsPage" class="page-content">
+    <!-- Overview Cards -->
+    <div class="dashboard-grid" style="margin-bottom: 24px;">
+        <div class="dashboard-card" style="border-left: 3px solid var(--primary);">
+            <div class="card-header">
+                <div style="flex: 1;">
+                    <div class="card-title">Total Tasks</div>
+                    <div class="card-value-wrapper">
+                        <span class="card-value" id="totalTasks">0</span>
+                    </div>
+                    <div class="card-secondary" id="tasksBreakdown">0 completed</div>
+                </div>
+                <div class="card-icon">✅</div>
+            </div>
+            <div class="card-footer">
+                <span>Quizzes, Chats, Events</span>
+            </div>
+        </div>
+
+        <div class="dashboard-card" style="border-left: 3px solid var(--success);">
+            <div class="card-header">
+                <div style="flex: 1;">
+                    <div class="card-title">Quiz Attempts</div>
+                    <div class="card-value-wrapper">
+                        <span class="card-value" id="totalQuizAttempts">0</span>
+                    </div>
+                    <div class="card-secondary" id="todayQuizAttempts">0 today</div>
+                </div>
+                <div class="card-icon">🎯</div>
+            </div>
+            <div class="card-footer">
+                <span>Average Score: <strong id="avgQuizScore">0%</strong></span>
+            </div>
+        </div>
+
+        <div class="dashboard-card" style="border-left: 3px solid var(--accent);">
+            <div class="card-header">
+                <div style="flex: 1;">
+                    <div class="card-title">Chat Queries</div>
+                    <div class="card-value-wrapper">
+                        <span class="card-value" id="totalQueries">0</span>
+                    </div>
+                    <div class="card-secondary" id="todayQueries">0 today</div>
+                </div>
+                <div class="card-icon">💬</div>
+            </div>
+            <div class="card-footer">
+                <span>Active Sessions: <strong id="activeSessions">0</strong></span>
+            </div>
+        </div>
+
+        <div class="dashboard-card" style="border-left: 3px solid var(--warning);">
+            <div class="card-header">
+                <div style="flex: 1;">
+                    <div class="card-title">This Week</div>
+                    <div class="card-value-wrapper">
+                        <span class="card-value" id="weekQuizAttempts">0</span>
+                    </div>
+                    <div class="card-secondary">Quiz attempts</div>
+                </div>
+                <div class="card-icon">📈</div>
+            </div>
+            <div class="card-footer">
+                <span>Weekly activity</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Score Distribution -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Score Distribution</h3>
+            </div>
+            <div id="scoreDistribution" style="padding: 20px;">
+                <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                    Loading...
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Types -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Quiz Types</h3>
+            </div>
+            <div id="quizTypesChart" style="padding: 20px;">
+                <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                    Loading...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Trends -->
+    <div class="section-card" style="margin-bottom: 24px;">
+        <div class="section-header">
+            <h3 class="section-title">7-Day Performance Trend</h3>
+        </div>
+        <div id="performanceTrend" style="padding: 20px; min-height: 200px;">
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 class="section-title">Recent Activity</h3>
+            <div style="font-size: 11px; color: var(--text-secondary);" id="lastUpdated">
+                Last updated: Just now
+            </div>
+        </div>
+        <div id="recentActivity" style="padding: 20px;">
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                Loading...
+            </div>
+        </div>
+    </div>
+</div>

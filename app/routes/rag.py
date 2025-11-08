@@ -113,8 +113,69 @@ def search_documents():
 @rag_bp.route('/status', methods=['GET'])
 def get_status():
     """Get RAG system status"""
+    if not rag_service:
+        return jsonify({
+            "ready": False,
+            "has_documents": False,
+            "document_count": 0,
+            "status": "Not initialized"
+        })
+    
+    ready = rag_service.is_ready()
+    has_documents = rag_service.vectorstore is not None
+    document_count = rag_service.get_document_count() if has_documents else 0
+    status = "Ready" if ready and has_documents else "Processing" if has_documents else "Empty"
+    
     return jsonify({
-        "ready": rag_service.is_ready() if rag_service else False,
-        "has_documents": rag_service.vectorstore is not None if rag_service else False
+        "ready": ready,
+        "has_documents": has_documents,
+        "document_count": document_count,
+        "status": status
     })
+
+@rag_bp.route('/files', methods=['GET'])
+def list_files():
+    """List all uploaded files with metadata"""
+    try:
+        files = []
+        if os.path.exists(UPLOAD_FOLDER):
+            for filename in os.listdir(UPLOAD_FOLDER):
+                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                if os.path.isfile(filepath):
+                    stat = os.stat(filepath)
+                    files.append({
+                        "filename": filename,
+                        "size": stat.st_size,
+                        "size_mb": round(stat.st_size / (1024 * 1024), 2),
+                        "uploaded": stat.st_mtime,
+                        "type": filename.rsplit('.', 1)[1].lower() if '.' in filename else 'unknown'
+                    })
+        
+        # Sort by upload time (newest first)
+        files.sort(key=lambda x: x['uploaded'], reverse=True)
+        
+        return jsonify({
+            "files": files,
+            "count": len(files)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@rag_bp.route('/files/<filename>', methods=['DELETE'])
+def delete_file(filename):
+    """Delete a file from the knowledge base"""
+    try:
+        filename = secure_filename(filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return jsonify({
+                "status": "success",
+                "message": f"File '{filename}' deleted"
+            })
+        else:
+            return jsonify({"error": "File not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 

@@ -72,3 +72,39 @@ Return ONLY a JSON object with this structure:
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@calendar_bp.route('/upcoming', methods=['GET'])
+def get_upcoming_events():
+    """Get upcoming events for the next 7 days"""
+    try:
+        from datetime import datetime, timedelta
+        
+        all_events = storage._memory_storage.get('events', {})
+        upcoming = []
+        today = datetime.now().date()
+        week_end = today + timedelta(days=7)
+        
+        for date_str, events in all_events.items():
+            try:
+                event_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                if today <= event_date <= week_end:
+                    for event in events:
+                        upcoming.append({
+                            "date": date_str,
+                            "title": event.get('title', ''),
+                            "description": event.get('description', ''),
+                            "time": event.get('time', '')
+                        })
+            except ValueError:
+                continue
+        
+        # Sort by date
+        upcoming.sort(key=lambda x: x['date'])
+        
+        return jsonify({
+            "events": upcoming,
+            "count": len(upcoming),
+            "next_event": upcoming[0] if upcoming else None
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+

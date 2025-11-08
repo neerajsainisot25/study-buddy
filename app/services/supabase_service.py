@@ -14,21 +14,30 @@ class SupabaseService:
         
         if not supabase_url or not supabase_key:
             self.client = None
+            self.service_client = None
             self.available = False
         else:
             try:
                 # Initialize Supabase client (simplified for compatibility)
                 self.client: Client = create_client(supabase_url, supabase_key)
+                self.available = True
+                
+                # Try to initialize service client (optional, for admin operations)
+                # Service client is only needed for admin operations that bypass RLS
                 self.service_client: Optional[Client] = None
                 supabase_service_key = getattr(Config, 'SUPABASE_SERVICE_KEY', None)
-                if supabase_service_key:
-                    self.service_client = create_client(supabase_url, supabase_service_key)
-                self.available = True
+                if supabase_service_key and supabase_service_key.strip():
+                    try:
+                        self.service_client = create_client(supabase_url, supabase_service_key)
+                    except Exception:
+                        # Service key is optional, silently fail - main client still works
+                        self.service_client = None
             except Exception as e:
                 print(f"Error initializing Supabase: {e}")
                 import traceback
                 traceback.print_exc()
                 self.client = None
+                self.service_client = None
                 self.available = False
     
     def is_available(self) -> bool:

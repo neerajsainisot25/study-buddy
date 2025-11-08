@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Component Loading Test</h1>
+    <div id="status">Loading...</div>
+    <hr>
+    <h2>Sidebar:</h2>
+    <div id="sidebar" style="border: 1px solid #ccc; padding: 10px;"></div>
+    <hr>
+    <h2>Dashboard:</h2>
+    <div id="dashboard" style="border: 1px solid #ccc; padding: 10px;"></div>
+    
+    <script>
+        async function testLoad() {
+            const status = document.getElementById('status');
+            try {
+                // Test sidebar
+                const sidebarResp = await fetch('/templates/components/sidebar.html');
+                const sidebarHtml = await sidebarResp.text();
+                document.getElementById('sidebar').innerHTML = sidebarHtml;
+                
+                // Test dashboard
+                const dashResp = await fetch('/templates/pages/dashboard.html');
+                const dashHtml = await dashResp.text();
+                document.getElementById('dashboard').innerHTML = dashHtml;
+                
+                status.innerHTML = '<span class="success">✅ All components loaded successfully!</span>';
+            } catch (error) {
+                status.innerHTML = '<span class="error">❌ Error: ' + error.message + '</span>';
+            }
+        }
+        testLoad();
+    </script>
+</body>
+</html>
