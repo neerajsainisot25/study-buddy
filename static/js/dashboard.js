@@ -113,6 +113,9 @@ class Dashboard {
             if (data.activity?.recent) {
                 this.updateUpcomingEvents(data.activity.recent);
             }
+            
+            this.updateQuizPerformance(data.quiz);
+            this.updateRecentChats(data.chat);
         } catch (error) {
             console.error('Error loading analytics:', error);
         }
@@ -171,6 +174,79 @@ class Dashboard {
                 }
             })
             .catch(error => console.error('Error loading events:', error));
+    }
+
+    updateQuizPerformance(quizData) {
+        const container = document.getElementById('quizPerformanceList');
+        if (!container) return;
+
+        fetch('/api/analytics/quiz')
+            .then(response => response.json())
+            .then(data => {
+                const topicPerf = data.topic_performance || {};
+                const topics = Object.keys(topicPerf);
+                
+                if (topics.length > 0) {
+                    let html = '';
+                    topics.slice(0, 3).forEach((topic, index) => {
+                        const perf = topicPerf[topic];
+                        const score = perf.avg_score || 0;
+                        const borderStyle = index < topics.length - 1 ? 'border-bottom: 1px solid var(--border);' : '';
+                        
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; ${borderStyle}">
+                                <div style="font-size: 14px; font-weight: 500; color: var(--text);">${this.escapeHtml(topic)}</div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="flex: 1; height: 8px; background: var(--bg-secondary); border-radius: 4px; width: 120px; overflow: hidden;">
+                                        <div style="height: 100%; background: var(--gradient-primary); width: ${score}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                    <span style="font-size: 14px; font-weight: 600; color: var(--text); min-width: 40px; text-align: right;">${Math.round(score)}%</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Complete quizzes to see performance data</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading quiz performance:', error);
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Complete quizzes to see performance data</div>';
+            });
+    }
+
+    updateRecentChats(chatData) {
+        const container = document.getElementById('recentChatsList');
+        if (!container) return;
+
+        fetch('/api/chat/history')
+            .then(response => response.json())
+            .then(data => {
+                if (data.sessions && data.sessions.length > 0) {
+                    let html = '';
+                    data.sessions.slice(0, 2).forEach((session, index) => {
+                        const borderStyle = index < 1 ? 'border-bottom: 1px solid var(--border);' : '';
+                        const preview = session.last_message || 'No messages';
+                        
+                        html += `
+                            <div style="padding: 12px 0; ${borderStyle}">
+                                <div style="font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px;">
+                                    Chat Session (${session.message_count} messages)
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">${this.escapeHtml(preview)}</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Start chatting to see recent conversations</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading chat sessions:', error);
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Start chatting to see recent conversations</div>';
+            });
     }
 
     // Utility methods

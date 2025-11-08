@@ -35,10 +35,11 @@
     --warning: #FFEB3B;           /* Yellow */
     --error: #F44336;             /* Red */
     
-    /* Gradients */
+    /* Gradients - Vibrant Yellow-Green-Blue */
     --gradient-primary: linear-gradient(135deg, #FFEB3B 0%, #4CAF50 50%, #2196F3 100%);
-    --gradient-subtle: linear-gradient(135deg, rgba(255, 235, 59, 0.1) 0%, rgba(76, 175, 80, 0.1) 50%, rgba(33, 150, 243, 0.1) 100%);
+    --gradient-subtle: linear-gradient(135deg, rgba(255, 235, 59, 0.15) 0%, rgba(76, 175, 80, 0.15) 50%, rgba(33, 150, 243, 0.15) 100%);
     --gradient-hover: linear-gradient(135deg, #FFF59D 0%, #81C784 50%, #64B5F6 100%);
+    --gradient-card: linear-gradient(135deg, rgba(255, 235, 59, 0.08) 0%, rgba(76, 175, 80, 0.08) 50%, rgba(33, 150, 243, 0.08) 100%);
     
     /* Shadows - Minimal */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -90,30 +91,43 @@ h4 { font-size: 16px; }
 h5 { font-size: 14px; }
 h6 { font-size: 12px; }
 
-/* Sidebar */
+/* Sidebar - Minimal White */
 .sidebar {
-    background: var(--bg);
-    border-right: 1px solid var(--border);
+    background: var(--bg) !important;
+    border-right: 1px solid var(--border) !important;
 }
 
 .sidebar-header {
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
+    background: var(--bg) !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.sidebar-profile {
+    background: var(--gradient-card) !important;
+    border-top: 1px solid var(--border) !important;
 }
 
 /* Navigation */
 .nav-item {
-    color: var(--text);
+    color: var(--text) !important;
     transition: all 0.2s ease;
 }
 
 .nav-item:hover {
-    background: var(--bg-tertiary);
+    background: var(--bg-tertiary) !important;
 }
 
 .nav-item.active {
-    background: var(--gradient-primary);
-    color: var(--text-on-primary);
+    background: var(--gradient-primary) !important;
+    color: var(--text-on-primary) !important;
+}
+
+.nav-icon {
+    stroke: var(--text) !important;
+}
+
+.nav-item.active .nav-icon {
+    stroke: var(--text-on-primary) !important;
 }
 
 /* Cards */
@@ -132,17 +146,25 @@ h6 { font-size: 12px; }
     box-shadow: var(--shadow-md);
 }
 
-/* Welcome Banner */
+/* Welcome Banner - Vibrant Gradient */
 .welcome-banner {
-    background: var(--gradient-primary);
-    color: var(--text-on-primary);
+    background: var(--gradient-primary) !important;
+    color: var(--text-on-primary) !important;
     border-radius: var(--border-radius);
-    padding: 24px;
+    padding: 32px;
     margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
 }
 
 .welcome-banner h2 {
-    color: var(--text-on-primary);
+    color: var(--text-on-primary) !important;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.welcome-banner p {
+    color: var(--text-on-primary) !important;
+    opacity: 0.95;
 }
 
 /* Buttons */
