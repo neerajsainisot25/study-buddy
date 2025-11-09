@@ -163,22 +163,60 @@ class Quiz {
         const container = document.getElementById('previewContainer');
         if (!container) return;
 
-        container.innerHTML = '';
+        const metadata = this.quizMetadata || {};
+        const questionTypes = {
+            'multiple_choice': 'Multiple Choice',
+            'true_false': 'True/False',
+            'fill_blank': 'Fill in the Blank',
+            'short_answer': 'Short Answer'
+        };
 
-        this.currentQuestions.forEach((question, index) => {
-            const previewDiv = document.createElement('div');
-            previewDiv.className = 'preview-question';
-            previewDiv.innerHTML = `
-                <div class="preview-question-number">Question ${index + 1}</div>
-                <div class="preview-question-text">${this.escapeHtml(question.question)}</div>
-                <div class="preview-options">
-                    ${question.options.map((opt, i) => 
-                        `<div>${String.fromCharCode(65 + i)}. ${this.escapeHtml(opt)}</div>`
-                    ).join('')}
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(0, 121, 107, 0.3);">
+                    <svg style="width: 40px; height: 40px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
                 </div>
-            `;
-            container.appendChild(previewDiv);
-        });
+                
+                <h3 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 8px;">
+                    Quiz Ready!
+                </h3>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 32px;">
+                    Your quiz has been generated and is ready to start
+                </p>
+
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    <div style="display: grid; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary); font-size: 14px;">Topic</span>
+                            <span style="color: var(--text); font-weight: 600; font-size: 14px;">${this.escapeHtml(metadata.topic || 'General')}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary); font-size: 14px;">Questions</span>
+                            <span style="color: var(--text); font-weight: 600; font-size: 14px;">${this.currentQuestions.length}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary); font-size: 14px;">Type</span>
+                            <span style="color: var(--text); font-weight: 600; font-size: 14px;">${questionTypes[metadata.quiz_type] || 'Multiple Choice'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 14px;">Difficulty</span>
+                            <span style="color: var(--text); font-weight: 600; font-size: 14px; text-transform: capitalize;">${metadata.difficulty || 'Intermediate'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(0, 121, 107, 0.1), rgba(176, 166, 199, 0.1)); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
+                        <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        Questions are hidden until you start the quiz
+                    </p>
+                </div>
+            </div>
+        `;
     }
 
     displayQuiz() {
