@@ -7,10 +7,6 @@ class Calendar {
     }
 
     init() {
-        if (!window.authManager || !window.authManager.isAuthenticated()) {
-            this.showLoginPrompt();
-            return;
-        }
         this.renderCalendar();
         this.loadEvents();
         this.setDefaultDate();
@@ -239,6 +235,7 @@ class Calendar {
                     if (data.events && data.events.length > 0) {
                         this.events[dateStr] = data.events;
                     }
+                }
             }
             
             this.renderCalendar();
