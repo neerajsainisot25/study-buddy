@@ -140,10 +140,17 @@ The chat supports simultaneous multi-modal capabilities:
 
 ## Recent Changes
 
-**November 9, 2025 - PostgreSQL Database Integration**
-- Migrated from in-memory storage to PostgreSQL database
-- Implemented session-based user identification using Flask sessions
-- Created comprehensive database schema with SQLAlchemy models
-- Updated all routes (chat, quiz, calendar, profile) to use database with memory fallback
-- Fixed reserved keyword issue (metadata → meta_data)
-- All features now persist data across sessions
+**November 9, 2025 - Real-Time Dashboard Analytics**
+- Completed PostgreSQL database integration across all features
+- Implemented real-time dashboard analytics with session-scoped data
+- Updated analytics.py to query database for quiz, chat, event, and user metrics
+- Replaced all mock/hardcoded dashboard data with live database queries
+- Dashboard now displays:
+  - Real quiz performance by topic with aggregated scores
+  - Recent chat sessions from database
+  - Upcoming events from calendar
+  - Study streaks and metrics from actual user activity
+  - Daily performance trends (last 7 days)
+- Fixed analytics bug: quiz_by_type calculation corrected
+- All dashboard metrics update dynamically from PostgreSQL data
+- Removed Preferences section from profile page
