@@ -140,16 +140,18 @@ The chat supports simultaneous multi-modal capabilities:
 
 ## Recent Changes
 
-**November 9, 2025 - Calendar UI Fix & Full Integration**
+**November 9, 2025 - Calendar UI Redesign & Full Integration**
+- Redesigned calendar page with single unified monthly calendar view
+- Removed duplicate mini calendar for cleaner, more focused interface
+- Calendar layout now features:
+  - Large main calendar grid showing all days and events
+  - Right sidebar with Add Event form, Today's Events, and Upcoming Events
+  - Streamlined event management in one view
 - Fixed calendar rendering issue: removed non-existent authentication checks
 - Fixed JavaScript syntax error in loadEvents() function (missing closing brace)
-- Calendar now displays full month grid with all dates visible
-- Added mini calendar grid in right column with visual day indicators
-- Mini calendar features:
-  - Compact 7x7 grid showing all days of month
-  - Today highlighted with teal circular background
-  - Event dots appear under days with scheduled events
-  - Clickable dates auto-fill event creation form
+- Calendar displays full month grid with all dates visible
+- Today highlighted with teal circular background
+- Events shown directly on calendar dates (up to 2 per day with "+X more" indicator)
 - All calendar navigation buttons working (Previous, Next, Today, AI Suggest)
 - Full PostgreSQL backend integration for events
 - Calendar fully connected to database with real-time event loading
