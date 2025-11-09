@@ -82,6 +82,7 @@ class Quiz {
                 this.userAnswers = new Array(this.currentQuestions.length).fill(null);
                 this.currentQuestionIndex = 0;
                 this.showPreview();
+            } else {
                 alert('Error: ' + (data.error || 'Failed to generate quiz'));
                 this.showSetup();
             }
