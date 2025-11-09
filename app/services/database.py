@@ -93,20 +93,37 @@ class DatabaseService:
     def _initialize(self):
         """Initialize database connection"""
         try:
-            database_url = os.getenv('DATABASE_URL')
+            # Use Supabase connection URL with proper pooler configuration
+            supabase_password = os.getenv('SUPABASE_PASSWORD')
             
-            if not database_url:
-                logger.warning("DATABASE_URL not found, database features will be disabled")
+            if not supabase_password:
+                logger.warning("SUPABASE_PASSWORD not found, database features will be disabled")
                 return
             
-            self.engine = create_engine(database_url, pool_pre_ping=True)
+            # Use pooler connection for production with pgbouncer
+            database_url = f"postgresql://postgres.wjtyfgibnylvlgeusrxf:{supabase_password}@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres"
+            
+            # Set pool configuration for better connection management
+            self.engine = create_engine(
+                database_url, 
+                pool_pre_ping=True,
+                pool_size=5,
+                max_overflow=10,
+                pool_timeout=30,
+                echo=False
+            )
             self.Session = scoped_session(sessionmaker(bind=self.engine))
             
-            Base.metadata.create_all(self.engine)
-            logger.info("Database initialized successfully")
+            # Don't create_all on Supabase - tables are managed by Prisma
+            # Just verify connection
+            from sqlalchemy import text
+            with self.engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            
+            logger.info("Connected to Supabase database successfully")
             
         except Exception as e:
-            logger.error(f"Failed to initialize database: {e}")
+            logger.error(f"Failed to connect to Supabase database: {e}")
             self.engine = None
             self.Session = None
     

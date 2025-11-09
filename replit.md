@@ -115,11 +115,14 @@ The chat supports simultaneous multi-modal capabilities:
 
 ### Database
 
-**PostgreSQL**
-- Replit built-in Neon PostgreSQL database
-- SQLAlchemy ORM (>=2.0.0)
-- Connection pooling with scoped sessions
-- Automatic migration support
+**Supabase PostgreSQL**
+- Cloud-hosted PostgreSQL database via Supabase
+- Connection pooling via Supabase pooler (pgbouncer)
+- Dual management system:
+  - **Prisma ORM**: Schema management, migrations, and type-safe queries (Node.js/TypeScript)
+  - **SQLAlchemy ORM**: Flask backend database operations (Python)
+- Database models synchronized between Prisma schema and SQLAlchemy models
+- Automatic connection failover to in-memory storage when database unavailable
 
 ### Supporting Libraries
 
