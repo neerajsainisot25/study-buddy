@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from app.config import Config
-from app.extensions import supabase
 
 def create_app(config_class=Config):
     """Application factory pattern"""
@@ -12,58 +11,22 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
-    # Initialize extensions
-    supabase.init_app(app)
-    
-    # Verify Supabase connection on startup
-    if supabase.is_available():
-        try:
-            # Try to ping Supabase by checking if client is accessible
-            if supabase.ping():
-                app.logger.info("✅ Supabase connection verified on startup")
-            else:
-                app.logger.warning("⚠️  Supabase client initialized but ping failed")
-        except Exception as e:
-            app.logger.error(f"❌ Error verifying Supabase connection: {e}")
-    else:
-        app.logger.warning("⚠️  Supabase not configured or unavailable")
-
     # Health check route
     @app.route('/health')
     def health():
-        """Health check endpoint that verifies Supabase connection"""
-        if supabase.is_available() and supabase.ping():
-            return jsonify({"ok": True}), 200
-        else:
-            return jsonify({"ok": False, "error": "Supabase not available"}), 503
+        """Health check endpoint"""
+        return jsonify({"ok": True}), 200
 
     # Register blueprints
-    # Register chat_v2 first to ensure new routes take precedence
-    from app.routes.chat_v2 import chat_v2_bp
-    app.register_blueprint(chat_v2_bp, url_prefix='/chat')
-    
-    # Register quiz_v2 routes
-    from app.routes.quiz_v2 import quiz_v2_bp
-    app.register_blueprint(quiz_v2_bp, url_prefix='/quiz')
-    
-    # Register other blueprints
     from app.routes import chat_bp, quiz_bp, calendar_bp
     from app.routes.rag import rag_bp
     from app.routes.analytics import analytics_bp
-    from app.routes.auth import auth_bp
-    
-    # Authentication routes
-    app.register_blueprint(auth_bp, url_prefix='/api/auth')
     
     # Main app routes
     app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
     app.register_blueprint(calendar_bp, url_prefix='/api/calendar')
     app.register_blueprint(analytics_bp, url_prefix='/api/analytics')
-    
-    # Chat routes (active)
     app.register_blueprint(chat_bp, url_prefix='/api/chat')
-    
-    # RAG routes
     app.register_blueprint(rag_bp, url_prefix='/api/rag')
     
     # Route for chat.html template
@@ -107,4 +70,3 @@ def create_app(config_class=Config):
         return send_from_directory(root_dir, 'index.html')
 
     return app
-

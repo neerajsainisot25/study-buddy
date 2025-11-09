@@ -3,7 +3,6 @@ import json
 import os
 from typing import Dict, List, Any, Optional
 from app.config import Config
-from app.services.supabase_service import supabase_service
 
 class StorageService:
     """Service for managing data storage"""
@@ -15,8 +14,6 @@ class StorageService:
             'conversations': {},
             'events': {}
         }
-        # Disable Supabase for now - using memory storage only
-        self.use_supabase = False
         self._load_from_file()
     
     def _load_from_file(self):

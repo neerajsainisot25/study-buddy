@@ -1,218 +1,119 @@
-# AI Assistant - Academic Dashboard
+# StudyMate - Academic Companion Application
 
-## Project Overview
+## Overview
 
-A modern, feature-rich academic assistant application with AI-powered features including:
-- AI chatbot with RAG (Retrieval-Augmented Generation) support
-- Quiz generation and management
-- Calendar and event management
-- Analytics and performance tracking
-- File upload and document processing
+StudyMate is a standalone Flask-based web application designed to enhance academic learning through AI-powered features. The application provides students with an intelligent chatbot for questions, quiz generation capabilities, calendar management for events and deadlines, and analytics tracking for study progress. The system leverages OpenRouter's free LLM models, supports RAG (Retrieval-Augmented Generation) for knowledge base queries, web search integration, and advanced reasoning capabilities.
 
-## Tech Stack
+The application uses a modern single-page application (SPA) architecture with component-based frontend design and in-memory storage (no database or authentication required).
 
-### Backend
-- **Flask 3.0.0** - Python web framework
-- **LangChain** - AI/LLM integration framework
-- **LangGraph** - Advanced AI workflow orchestration
-- **OpenRouter API** - LLM provider (using FREE models: minimax-m2 with Google Gemini Flash 1.5 fallback)
-- **Supabase** (optional) - Database backend (not required for core features)
-- **BeautifulSoup4** - Web scraping
-- **DuckDuckGo Search** - Web search integration
+## User Preferences
 
-### Frontend
-- **HTML5/CSS3** - Modern semantic markup and styling
-- **Tailwind CSS** - Utility-first CSS framework (via CDN)
-- **JavaScript ES6+** - Modern JavaScript
-- **"Focused Horizon" Theme** - Minimalist design with professional academic aesthetic
+Preferred communication style: Simple, everyday language.
 
-### Design Theme: "Focused Horizon"
+## System Architecture
 
-A balanced theme combining academic focus with supportive study companion vibes.
+### Frontend Architecture
 
-**Color Palette:**
-- **Deep Teal** (#00796B) - Primary color representing wisdom, stability, and concentration
-- **Soft Lavender** (#B0A6C7) - Secondary accent for imagination and elegant touches
-- **Peach Gradient** (#FFB088-#FFCCB3) - Accent color for warmth, enthusiasm, and creativity
-- **Warm Cream** (#F5F5DC) - Background providing clean, inviting, low-strain reading
-- **Charcoal** (#36454F) - Text color offering strong contrast without harshness
+**Technology Stack:**
+- Vanilla JavaScript with component-based architecture
+- Tailwind CSS for styling with custom nature-inspired theme
+- Dynamic HTML component loading system
+- No frontend framework dependencies (React, Vue, etc.)
 
-The theme emphasizes clean lines, generous whitespace, and a calming yet stimulating atmosphere perfect for focused study.
+**Design Pattern:**
+The frontend follows a modular component structure where each feature (Chat, Quiz, Calendar, Analytics, Profile) is implemented as a separate JavaScript class with its own initialization and state management.
 
-## Project Structure
+**Theme System:**
+A custom "Focused Horizon" nature-inspired color palette is implemented with Deep Teal (#00796B), Soft Lavender (#B0A6C7), and Light Peach (#FFB088) as primary colors.
 
-```
-/
-├── app/                      # Flask application
-│   ├── routes/              # API endpoints (chat, quiz, calendar, analytics, RAG)
-│   ├── services/            # Business logic (LLM, RAG, storage, web search)
-│   ├── utils/               # Helper functions
-│   ├── __init__.py          # App factory
-│   ├── config.py            # Configuration
-│   └── extensions.py        # Flask extensions
-├── static/                  # Frontend assets
-│   ├── css/                # Stylesheets
-│   └── js/                 # JavaScript modules
-├── templates/               # HTML templates
-│   ├── components/         # Reusable components (sidebar, modals)
-│   └── pages/              # Page templates
-├── docs/                    # Documentation
-├── data/                    # Runtime data (storage, uploads)
-├── main.py                  # Application entry point
-├── requirements-minimal.txt # Python dependencies (optimized for Replit)
-└── index.html              # Main entry page
-```
+### Backend Architecture
 
-## Setup and Configuration
+**Framework:** Flask 3.0.0 with application factory pattern
 
-### Environment Variables
+**Structure:**
+- `app/__init__.py`: Application factory with blueprint registration
+- `app/routes/`: Blueprint modules for different features (chat, quiz, calendar, analytics, RAG)
+- `app/services/`: Business logic and external integrations
+- `app/config.py`: Centralized configuration management
 
-The application uses the following environment variables (configure via Replit Secrets):
+**Storage Strategy:**
+In-memory storage only. No database or authentication required.
 
-- `OPENROUTER_API_KEY` - **Required** - OpenRouter API key for AI chat and quiz generation (uses FREE models: minimax-m2 and Google Gemini Flash 1.5)
-- `SUPABASE_URL` - **Optional** - Supabase project URL (not required for core features)
-- `SUPABASE_KEY` - **Optional** - Supabase anonymous key (not required for core features)
-- `SUPABASE_SERVICE_KEY` - **Optional** - Supabase service role key (not required for core features)
-- `PORT` - Server port (default: 5000)
-- `FLASK_DEBUG` - Debug mode (default: False for production)
-- `STORAGE_TYPE` - Storage backend: 'memory' or 'file' (default: memory)
+### LLM Integration
 
-### Running Locally
+**Service:** OpenRouter API with 100% free models
+**Primary Model:** `minimax/minimax-m2:free`
+**Fallback Model:** `google/gemini-flash-1.5`
 
-The application is already configured to run via the "Flask App" workflow on port 5000.
+**Advanced Features:**
+1. **RAG (Retrieval-Augmented Generation)**: Implemented via `RAGService` using FAISS vector store and HuggingFace embeddings
+2. **Web Search**: DuckDuckGo search integration for real-time information retrieval
+3. **Reasoning Service**: Multi-layer chain-of-thought processing
+4. **LangGraph Integration**: Advanced RAG workflows with state management
 
-### Dependencies
+### Quiz System
 
-The project uses `requirements-minimal.txt` which excludes heavy dependencies like PyTorch and sentence-transformers to fit within Replit's disk quota. This means:
+The quiz system supports multiple question types (multiple choice, true/false, fill-in-blank, short answer) with configurable difficulty levels and source materials.
 
-- ✅ Core features work: Chat, Quiz, Calendar, Analytics
-- ⚠️ RAG features are limited without sentence-transformers embeddings
-- To enable full RAG support with local embeddings, you would need to upgrade the Replit plan or use cloud-based embeddings
+### Chat System
 
-## Features
+**Capabilities System:**
+The chat supports simultaneous multi-modal capabilities:
+- RAG (knowledge base search)
+- Web search
+- Iterative research
+- Advanced reasoning/thinking
 
-### Core Features (Currently Working)
-1. **Dashboard** - Overview with metrics and quick actions
-2. **AI Chat** - Powered by OpenRouter with FREE models (no login required)
-3. **Quiz Generation** - AI-generated quizzes with multiple question types (no login required)
-4. **Calendar** - Event management and scheduling (no login required)
-5. **Analytics** - Performance tracking and metrics (no login required)
-6. **Profile Management** - User settings and preferences (no login required)
+### Calendar & Analytics
 
-### Advanced Features
-- **RAG/Document Search** - Available but limited without sentence-transformers (requires more disk space)
-- **Web Search** - DuckDuckGo integration for enhanced chat responses
-- **OpenRouter Fallback** - Automatic fallback to free Google Gemini Flash 1.5 model if primary fails
+**Calendar:** Event management system with date-based storage
+**Analytics:** Real-time dashboard tracking study progress
 
-## Known Issues & Warnings
+## External Dependencies
 
-1. **Sentence Transformers Warning**: The app shows a warning about missing `sentence-transformers` package. This is expected and doesn't affect core functionality. RAG features will work with limited capability.
+### Core Services
 
-2. **No Authentication Required**: The app is now fully open access - users can use all features without signing up or logging in.
+**OpenRouter API**
+- Purpose: LLM inference using 100% free models
+- Configuration: `OPENROUTER_API_KEY`
+- Default Model: `minimax/minimax-m2:free`
 
-3. **Supabase Optional**: Supabase database is optional and not required for core features to work.
+### LLM Services
 
-4. **Tailwind CDN Warning**: The browser console shows a warning about using Tailwind via CDN in production. This is for development convenience - for production, consider installing Tailwind locally.
+**LangChain Ecosystem**
+- `langchain` (>=1.0.0): Core framework
+- `langchain-community` (>=0.4.0): Community integrations
+- `langchain-openai` (>=1.0.0): OpenRouter integration
+- `langgraph` (>=1.0.0): State graph workflows
 
-## API Endpoints
+### Search & Retrieval
 
-All API endpoints are prefixed with `/api/`:
+**DuckDuckGo Search**
+- Library: `duckduckgo-search` (4.1.1)
 
-- `/api/chat/` - Chat functionality
-- `/api/quiz/` - Quiz management
-- `/api/calendar/` - Calendar and events
-- `/api/analytics/` - Analytics data
-- `/api/rag/` - RAG (document search) features
-- `/health` - Health check endpoint
+**Vector Store & Embeddings**
+- FAISS: `faiss-cpu` (>=1.7.4)
+- HuggingFace: `sentence-transformers` (>=2.2.2)
 
-## Deployment
+### Document Processing
 
-The project is configured for Replit Autoscale deployment:
-- Automatically scales based on traffic
-- Uses the same `python main.py` command
-- Port 5000 is automatically exposed
+**File Format Support**
+- PDF: `pypdf` (>=3.17.0)
+- Word Documents: `python-docx` (>=1.1.0)
+- HTML: `beautifulsoup4` (4.12.2)
 
-To deploy:
-1. Ensure `OPENROUTER_API_KEY` is set in Secrets
-2. Click the "Deploy" button in Replit
-3. The app will be available at your Replit deployment URL
+### Supporting Libraries
 
-## Development Notes
+- `flask-cors` (4.0.0): CORS handling
+- `requests` (>=2.32.5): HTTP client
+- `python-dotenv` (>=1.0.0): Environment variable management
 
-### Current State (Nov 8, 2025)
-- ✅ All Python dependencies installed (minimal set)
-- ✅ Flask app running on port 5000
-- ✅ CORS configured for Replit proxy
-- ✅ Workflow configured and running
-- ✅ **No authentication required** - All features fully accessible without login
-- ✅ **Open access** - Users can start using the app immediately
-- ✅ **Simplified logo** - "StudyMate" in teal without geometric design or subtitle
-- ✅ **OpenRouter with 100% free models** - minimax-m2 and Google Gemini Flash 1.5
-- ✅ **"Focused Horizon" theme** - Fully implemented with teal/lavender/peach palette
-- ✅ Deployment configured for Autoscale
-- ⚠️ RAG features have limited functionality (no local embeddings)
+## Environment Configuration
 
-### Recent Changes
+**Required Environment Variables:**
+- `OPENROUTER_API_KEY`: API key for LLM access
 
-**Authentication Removal** (Nov 8, 2025)
-- ✅ **Removed all authentication** - App is now fully open access without login requirement
-- ✅ **Removed @require_auth decorators** - All API routes (quiz, calendar, analytics) are now public
-- ✅ **Replaced authManager.apiCall() with fetch()** - All frontend calls now use standard fetch
-- ✅ **Hidden auth modal** - Users no longer see login/signup prompts
-- ✅ **Removed user profile display** - Sidebar no longer shows user info
-
-**Logo Redesign** (Nov 8, 2025)
-- ✅ **Simplified logo** - "StudyMate" text in teal color (#00796B)
-- ✅ **Removed geometric design** - No more S² square graphic
-- ✅ **Removed subtitle** - Clean single-line logo without "Academic Excellence"
-- ✅ **Enhanced visibility** - Clear, readable logo in sidebar
-
-**OpenRouter Integration** (Nov 8, 2025)
-- ✅ **100% FREE models** - Uses minimax-m2:free as primary, Google Gemini Flash 1.5 as fallback
-- ✅ **No cost AI** - Chat and quiz generation completely free with OpenRouter
-- ✅ **Robust error handling** - Automatic fallback ensures chat always works
-- ✅ **Streaming support** - Real-time chat responses with SSE
-
-**Previous Changes**
-- Simplified dependencies to fit Replit disk quota
-- Disabled Flask debug mode and reloader for stability
-- Configured CORS to allow all origins for Replit iframe proxy
-- Updated RAG service to gracefully handle missing dependencies
-- Implemented "Focused Horizon" theme with teal/lavender/peach palette
-- Replaced emoji icons with modern SVG icons throughout navigation
-- Enhanced welcome banner with teal gradient and white typography
-
-## Setup Instructions
-
-### Required Setup
-
-1. **Add OpenRouter API Key** (REQUIRED)
-   - Get **FREE** key from https://openrouter.ai/
-   - Add to Replit Secrets as `OPENROUTER_API_KEY`
-   - **Uses 100% FREE models** - No costs for chat or quiz generation!
-   - Primary: minimax/minimax-m2:free
-   - Fallback: google/gemini-flash-1.5 (also free)
-
-### Optional Enhancements
-
-2. **(Optional) Set up Supabase** - For user data persistence
-   - Create a Supabase project at https://supabase.com
-   - Add credentials to Replit Secrets (see above)
-   - Run the database schema if needed
-
-3. **(Optional) Upgrade for Full RAG** - For advanced document search
-   - Consider using cloud-based embeddings (OpenAI)
-   - Or upgrade Replit plan for more disk space to install sentence-transformers
-
-## Support & Documentation
-
-Full documentation is available in the `docs/` folder:
-- See `docs/QUICK_REFERENCE.md` for common tasks
-- See `docs/COMPLETE_FEATURE_LIST.md` for all features
-- See README.md for detailed project information
-
-## Version
-
-- **Version**: 2.1
-- **Last Updated**: November 8, 2025
-- **Status**: ✅ Running on Replit
+**Optional Configuration:**
+- `LLM_URL`: Custom LLM endpoint
+- `FLASK_DEBUG`: Debug mode toggle
+- `PORT`: Server port (default: 5000)
