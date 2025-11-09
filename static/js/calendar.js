@@ -82,6 +82,7 @@ class Calendar {
                 });
                 
                 container.innerHTML = html;
+            }
         } catch (error) {
             console.error('Error loading today events:', error);
         }
