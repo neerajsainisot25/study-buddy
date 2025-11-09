@@ -140,6 +140,14 @@ The chat supports simultaneous multi-modal capabilities:
 
 ## Recent Changes
 
+**November 9, 2025 - Calendar Date Display Fix**
+- **Fixed Date Input Confusion**: Added human-readable date preview below date input
+  - HTML5 date inputs display differently based on browser locale (MM/DD/YYYY vs DD/MM/YYYY)
+  - Date "09/11/2025" could be read as September 11 or November 9 depending on locale
+  - Now shows clear preview: "📅 Sun, November 9, 2025" below the date picker
+  - Eliminates all confusion about which date is selected
+  - Preview updates dynamically when user changes the date
+
 **November 9, 2025 - Bold UI Overhaul & Modern Design System**
 - **Complete Design System Refresh**: Implemented modern, bold design with vibrant colors and smooth interactions
   - New color palette: Rich Teal (#0D9488), Bright Indigo (#6366F1), Warm Amber (#F59E0B)

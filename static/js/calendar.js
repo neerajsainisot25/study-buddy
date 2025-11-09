@@ -92,7 +92,28 @@ class Calendar {
     setDefaultDate() {
         const dateInput = document.getElementById('eventDate');
         if (dateInput) {
-            dateInput.value = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            dateInput.value = today.toISOString().split('T')[0];
+            this.updateDatePreview(today.toISOString().split('T')[0]);
+            
+            // Add event listener to update preview when date changes
+            dateInput.addEventListener('change', (e) => {
+                this.updateDatePreview(e.target.value);
+            });
+        }
+    }
+
+    updateDatePreview(dateStr) {
+        const preview = document.getElementById('datePreview');
+        if (preview && dateStr) {
+            const date = new Date(dateStr + 'T12:00:00'); // Add time to avoid timezone issues
+            const formatted = date.toLocaleDateString('en-US', { 
+                weekday: 'short',
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric'
+            });
+            preview.textContent = `📅 ${formatted}`;
         }
     }
 
