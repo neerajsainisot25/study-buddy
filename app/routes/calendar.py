@@ -1,23 +1,32 @@
 """Calendar routes blueprint"""
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session as flask_session
 from app.services.llm_service import LLMService
 from app.services.storage import storage
+import uuid
 
 calendar_bp = Blueprint('calendar', __name__)
+
+def get_session_id():
+    """Get or create session ID"""
+    if 'session_id' not in flask_session:
+        flask_session['session_id'] = str(uuid.uuid4())
+    return flask_session['session_id']
 
 @calendar_bp.route('/events', methods=['GET'])
 def get_events():
     """Get all events for a date"""
+    session_id = get_session_id()
     date = request.args.get('date', '').strip()
     if not date:
         return jsonify({"error": "Date is required"}), 400
     
-    events = storage.get_events(date)
+    events = storage.get_events(session_id, date)
     return jsonify({"events": events})
 
 @calendar_bp.route('/events', methods=['POST'])
 def add_event():
     """Add a new event"""
+    session_id = get_session_id()
     data = request.json or {}
     date = data.get('date', '').strip()
     title = data.get('title', '').strip()
@@ -33,13 +42,14 @@ def add_event():
         "time": time
     }
     
-    added_event = storage.add_event(date, event)
+    added_event = storage.add_event(session_id, date, event)
     return jsonify({"event": added_event, "status": "added"})
 
 @calendar_bp.route('/events/<date>/<event_id>', methods=['DELETE'])
 def delete_event(date, event_id):
     """Delete an event"""
-    if storage.delete_event(date, event_id):
+    session_id = get_session_id()
+    if storage.delete_event(session_id, date, event_id):
         return jsonify({"status": "deleted"})
     return jsonify({"error": "Event not found"}), 404
 

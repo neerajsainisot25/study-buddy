@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from app.config import Config
+import os
 
 def create_app(config_class=Config):
     """Application factory pattern"""
@@ -9,6 +10,7 @@ def create_app(config_class=Config):
                 static_url_path='/static',
                 template_folder='../templates')
     app.config.from_object(config_class)
+    app.secret_key = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     # Health check route
@@ -21,8 +23,10 @@ def create_app(config_class=Config):
     from app.routes import chat_bp, quiz_bp, calendar_bp
     from app.routes.rag import rag_bp
     from app.routes.analytics import analytics_bp
+    from app.routes.profile import profile_bp
     
     # Main app routes
+    app.register_blueprint(profile_bp, url_prefix='/api')
     app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
     app.register_blueprint(calendar_bp, url_prefix='/api/calendar')
     app.register_blueprint(analytics_bp, url_prefix='/api/analytics')

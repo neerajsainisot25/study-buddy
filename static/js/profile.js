@@ -1,19 +1,10 @@
 class Profile {
     constructor() {
-        this.userData = {
-            name: 'Student',
-            email: 'student@studymate.app',
-            grade: 'Not Set',
-            goal: 20,
-            bio: 'No bio yet',
-            daysActive: 0,
-            totalQuizzes: 0,
-            studyHours: 0
-        };
+        this.userData = {};
     }
 
     init() {
-        this.updateUI();
+        this.loadProfile();
         this.setupEventListeners();
     }
 
@@ -26,15 +17,42 @@ class Profile {
         }
     }
 
+    async loadProfile() {
+        try {
+            const response = await fetch('/api/profile');
+            if (!response.ok) {
+                console.error('Failed to load profile');
+                return;
+            }
+            const data = await response.json();
+            
+            this.userData = {
+                name: data.name || 'Student',
+                email: data.email || '',
+                grade: data.grade || 'Not Set',
+                bio: data.bio || 'Welcome to StudyMate!',
+                weekly_goal: data.weekly_goal || 20,
+                days_active: data.days_active || 0,
+                total_quizzes: data.total_quizzes || 0,
+                study_hours: data.study_hours || 0,
+                avg_score: data.avg_score || 0
+            };
+            
+            this.updateUI();
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
+
     updateUI() {
         const fields = {
             'profileName': this.userData.name,
             'profileEmail': this.userData.email,
-            'profileGoal': this.userData.goal,
+            'profileGoal': this.userData.weekly_goal,
             'profileBio': this.userData.bio,
-            'profileDaysActive': this.userData.daysActive,
-            'profileTotalQuizzes': this.userData.totalQuizzes,
-            'profileStudyHours': this.userData.studyHours
+            'profileDaysActive': this.userData.days_active,
+            'profileTotalQuizzes': this.userData.total_quizzes,
+            'profileStudyHours': this.userData.study_hours
         };
 
         Object.entries(fields).forEach(([id, value]) => {
@@ -49,22 +67,34 @@ class Profile {
         });
     }
 
-    saveProfile() {
+    async saveProfile() {
         const name = document.getElementById('profileName')?.value;
         const grade = document.getElementById('profileGrade')?.value;
         const goal = document.getElementById('profileGoal')?.value;
         const bio = document.getElementById('profileBio')?.value;
 
-        this.userData = {
-            ...this.userData,
-            name: name || this.userData.name,
-            grade: grade || this.userData.grade,
-            goal: parseInt(goal) || this.userData.goal,
-            bio: bio || this.userData.bio
-        };
+        try {
+            const response = await fetch('/api/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    grade: grade,
+                    weekly_goal: parseInt(goal),
+                    bio: bio
+                })
+            });
 
-        alert('Profile saved locally!');
-        this.updateUI();
+            if (response.ok) {
+                alert('Profile saved successfully!');
+                this.loadProfile();
+            } else {
+                alert('Error saving profile');
+            }
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            alert('Error saving profile');
+        }
     }
 
     toggleDarkMode(enabled) {
@@ -76,7 +106,7 @@ class Profile {
     }
 
     deleteAccount() {
-        alert('This is a demo version. Account deletion is not available.');
+        alert('Account data is stored in session. Clear your browser data to reset.');
     }
 }
 
