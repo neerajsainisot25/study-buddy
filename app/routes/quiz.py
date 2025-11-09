@@ -1,13 +1,25 @@
 """Quiz routes blueprint"""
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session as flask_session
 from app.services.llm_service import LLMService
 from app.services.storage import storage
 from app.services.langgraph_service import rag_service
 from app.services.web_search import WebSearchService
+from app.services.database import db_service, Quiz, QuizAttempt
+from sqlalchemy.exc import SQLAlchemyError
 import time
 import json
+import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 quiz_bp = Blueprint('quiz', __name__)
+
+def get_session_id():
+    """Get or create session ID"""
+    if 'session_id' not in flask_session:
+        flask_session['session_id'] = str(uuid.uuid4())
+    return flask_session['session_id']
 
 @quiz_bp.route('/generate', methods=['POST'])
 def generate_quiz():
@@ -100,22 +112,48 @@ Return ONLY a JSON array of questions, no other text."""
                 q['explanation'] = "Correct answer explanation"
         
         # Store quiz metadata
+        session_id = get_session_id()
         quiz_id = f"quiz_{int(time.time())}"
-        quiz_data = {
-            "id": quiz_id,
-            "topic": topic_str,
-            "num_questions": num_questions,
-            "quiz_type": quiz_type,
-            "difficulty": difficulty,
-            "source_material": source_material,
-            "questions": questions,
-            "created": time.time()
-        }
         
-        # Store in memory (could be moved to database)
-        if not hasattr(storage, '_quiz_storage'):
-            storage._quiz_storage = []
-        storage._quiz_storage.append(quiz_data)
+        # Store in database if available
+        if db_service.is_available():
+            db_session = None
+            try:
+                db_session = db_service.get_session()
+                new_quiz = Quiz(
+                    quiz_id=quiz_id,
+                    session_id=session_id,
+                    topic=topic_str,
+                    num_questions=num_questions,
+                    quiz_type=quiz_type,
+                    difficulty=difficulty,
+                    source_material=source_material,
+                    questions=questions
+                )
+                db_session.add(new_quiz)
+                db_session.commit()
+            except SQLAlchemyError as e:
+                logger.error(f"Database error storing quiz: {e}")
+                if db_session:
+                    db_session.rollback()
+            finally:
+                if db_session:
+                    db_service.close_session(db_session)
+        else:
+            # Fallback to memory storage
+            if not hasattr(storage, '_quiz_storage'):
+                storage._quiz_storage = []
+            quiz_data = {
+                "id": quiz_id,
+                "topic": topic_str,
+                "num_questions": num_questions,
+                "quiz_type": quiz_type,
+                "difficulty": difficulty,
+                "source_material": source_material,
+                "questions": questions,
+                "created": time.time()
+            }
+            storage._quiz_storage.append(quiz_data)
         
         return jsonify({
             "questions": questions,
@@ -168,29 +206,66 @@ def submit_quiz_answers():
             })
 
         score = (correct / total * 100) if total > 0 else 0
+        session_id = get_session_id()
 
         # Get topic from quiz metadata
         quiz_topic = ''
-        if hasattr(storage, '_quiz_storage'):
+        if db_service.is_available():
+            db_session = None
+            try:
+                db_session = db_service.get_session()
+                quiz = db_session.query(Quiz).filter_by(quiz_id=quiz_id).first()
+                if quiz:
+                    quiz_topic = quiz.topic
+            except SQLAlchemyError as e:
+                logger.error(f"Database error getting quiz: {e}")
+            finally:
+                if db_session:
+                    db_service.close_session(db_session)
+        elif hasattr(storage, '_quiz_storage'):
             for quiz in storage._quiz_storage:
                 if quiz.get('id') == quiz_id:
                     quiz_topic = quiz.get('topic', '')
                     break
         
-        # Store quiz attempt
-        attempt_data = {
-            "quiz_id": quiz_id,
-            "score": score,
-            "correct": correct,
-            "total": total,
-            "time_taken": time_taken,
-            "timestamp": time.time(),
-            "topic": quiz_topic
-        }
-        
-        if not hasattr(storage, '_quiz_attempts'):
-            storage._quiz_attempts = []
-        storage._quiz_attempts.append(attempt_data)
+        # Store quiz attempt in database
+        if db_service.is_available():
+            db_session = None
+            try:
+                db_session = db_service.get_session()
+                attempt = QuizAttempt(
+                    quiz_id=quiz_id,
+                    session_id=session_id,
+                    score=score,
+                    correct=correct,
+                    total=total,
+                    time_taken=time_taken,
+                    topic=quiz_topic
+                )
+                db_session.add(attempt)
+                db_session.commit()
+            except SQLAlchemyError as e:
+                logger.error(f"Database error storing attempt: {e}")
+                if db_session:
+                    db_session.rollback()
+            finally:
+                if db_session:
+                    db_service.close_session(db_session)
+        else:
+            # Fallback to memory storage
+            attempt_data = {
+                "quiz_id": quiz_id,
+                "score": score,
+                "correct": correct,
+                "total": total,
+                "time_taken": time_taken,
+                "timestamp": time.time(),
+                "topic": quiz_topic
+            }
+            
+            if not hasattr(storage, '_quiz_attempts'):
+                storage._quiz_attempts = []
+            storage._quiz_attempts.append(attempt_data)
 
         return jsonify({
             "score": score,
@@ -206,15 +281,56 @@ def submit_quiz_answers():
 def get_quiz_history():
     """Get quiz history and statistics"""
     try:
+        session_id = get_session_id()
+        
+        if db_service.is_available():
+            db_session = None
+            try:
+                db_session = db_service.get_session()
+                
+                # Get quizzes and attempts from database
+                quizzes = db_session.query(Quiz).filter_by(session_id=session_id).all()
+                attempts = db_session.query(QuizAttempt).filter_by(session_id=session_id).order_by(QuizAttempt.created_at.desc()).limit(10).all()
+                
+                total_quizzes = len(quizzes)
+                total_attempts = db_session.query(QuizAttempt).filter_by(session_id=session_id).count()
+                
+                # Calculate average score
+                from sqlalchemy import func as sql_func
+                avg_score_result = db_session.query(sql_func.avg(QuizAttempt.score)).filter_by(session_id=session_id).scalar()
+                avg_score = round(avg_score_result, 1) if avg_score_result else 0
+                
+                # Format recent attempts
+                recent_attempts = [{
+                    "quiz_id": a.quiz_id,
+                    "score": a.score,
+                    "correct": a.correct,
+                    "total": a.total,
+                    "time_taken": a.time_taken,
+                    "topic": a.topic,
+                    "timestamp": a.created_at.timestamp()
+                } for a in attempts]
+                
+                return jsonify({
+                    "total_quizzes": total_quizzes,
+                    "total_attempts": total_attempts,
+                    "average_score": avg_score,
+                    "recent_attempts": recent_attempts
+                })
+            except SQLAlchemyError as e:
+                logger.error(f"Database error in get_quiz_history: {e}")
+            finally:
+                if db_session:
+                    db_service.close_session(db_session)
+        
+        # Fallback to memory storage
         attempts = getattr(storage, '_quiz_attempts', [])
         quizzes = getattr(storage, '_quiz_storage', [])
         
-        # Calculate statistics
         total_quizzes = len(quizzes)
         total_attempts = len(attempts)
         avg_score = sum(a['score'] for a in attempts) / len(attempts) if attempts else 0
         
-        # Get recent attempts
         recent_attempts = sorted(attempts, key=lambda x: x.get('timestamp', 0), reverse=True)[:10]
         
         return jsonify({
@@ -224,5 +340,6 @@ def get_quiz_history():
             "recent_attempts": recent_attempts
         })
     except Exception as e:
+        logger.error(f"Error in get_quiz_history: {e}")
         return jsonify({"error": str(e)}), 500
 

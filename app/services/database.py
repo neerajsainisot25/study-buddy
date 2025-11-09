@@ -79,7 +79,7 @@ class AnalyticsData(Base):
     session_id = Column(String(255), nullable=False, index=True)
     metric_type = Column(String(100), nullable=False)
     metric_value = Column(Float, nullable=False)
-    metadata = Column(JSON)
+    meta_data = Column(JSON)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class DatabaseService:
