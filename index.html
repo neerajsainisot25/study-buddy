@@ -12,34 +12,51 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#00796B',
-                        'primary-light': '#26A69A',
-                        'primary-dark': '#004D40',
-                        secondary: '#B0A6C7',
-                        'secondary-light': '#D4CBDF',
-                        'secondary-dark': '#8E839F',
-                        accent: '#FFB088',
-                        'accent-light': '#FFCCB3',
-                        'accent-dark': '#FF9966',
-                        cream: '#F5F5DC',
-                        charcoal: '#36454F',
-                        dark: '#36454F',
-                        success: '#00A896',
-                        warning: '#FFB088',
-                        danger: '#E57373',
+                        primary: {
+                            DEFAULT: '#0D9488',
+                            50: '#F0FDFA',
+                            100: '#CCFBF1',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                            700: '#0F766E',
+                        },
+                        secondary: {
+                            DEFAULT: '#6366F1',
+                            light: '#818CF8',
+                            dark: '#4F46E5',
+                        },
+                        accent: {
+                            DEFAULT: '#F59E0B',
+                            light: '#FDE68A',
+                            dark: '#D97706',
+                        },
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    boxShadow: {
+                        'colored': '0 10px 30px -10px rgba(13, 148, 136, 0.3)',
+                    },
+                    borderRadius: {
+                        'xl': '16px',
+                        '2xl': '24px',
+                        '3xl': '32px',
                     }
                 }
             }
         }
     </script>
     
-    <!-- Theme CSS -->
+    <!-- Base Styles -->
     <link rel="stylesheet" href="/static/css/nature-theme.css">
     <link rel="stylesheet" href="/static/css/logo-geometric.css">
     <link rel="stylesheet" href="/static/css/layout-fixes.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/components.css">
     <link rel="stylesheet" href="/static/css/enhancements.css">
+    <!-- Modern Design System - Loads LAST to override -->
+    <link rel="stylesheet" href="/static/css/modern-design-system.css">
+    <link rel="stylesheet" href="/static/css/bold-enhancements.css">
     <link rel="stylesheet" href="/static/css/theme-override.css">
 </head>
 <body style="background-color: var(--bg);">
