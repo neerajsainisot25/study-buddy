@@ -160,6 +160,65 @@ class Calendar {
         }
         
         grid.innerHTML = html;
+        this.renderMiniCalendar();
+    }
+
+    renderMiniCalendar() {
+        const miniGrid = document.getElementById('miniCalendarGrid');
+        const miniMonthYear = document.getElementById('miniMonthYear');
+        if (!miniGrid) return;
+
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        
+        if (miniMonthYear) {
+            miniMonthYear.textContent = this.currentDate.toLocaleDateString('en-US', { 
+                month: 'short', 
+                year: 'numeric' 
+            });
+        }
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        
+        let html = '';
+        
+        // Empty cells for days before month starts
+        for (let i = 0; i < firstDay; i++) {
+            html += '<div class="text-center py-2" style="color: var(--text-light);"></div>';
+        }
+        
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = date.toISOString().split('T')[0];
+            const isToday = date.toDateString() === today.toDateString();
+            const dayEvents = this.events[dateStr] || [];
+            const hasEvents = dayEvents.length > 0;
+            
+            let style = 'text-center py-2 text-sm cursor-pointer rounded transition-all hover:bg-opacity-80';
+            let innerStyle = '';
+            
+            if (isToday) {
+                style += ' font-bold';
+                innerStyle = 'background: var(--primary); color: var(--dark); width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;';
+            } else if (hasEvents) {
+                style += ' font-semibold';
+                innerStyle = 'color: var(--primary);';
+            } else {
+                innerStyle = 'color: var(--text);';
+            }
+            
+            html += `
+                <div class="${style}" onclick="selectDate('${dateStr}')">
+                    <span style="${innerStyle}">${day}</span>
+                    ${hasEvents && !isToday ? '<div style="width: 4px; height: 4px; background: var(--accent); border-radius: 50%; margin: 2px auto 0;"></div>' : ''}
+                </div>
+            `;
+        }
+        
+        miniGrid.innerHTML = html;
     }
 
     async loadEvents() {
@@ -418,3 +477,6 @@ async function deleteEventFromList(date, eventId) {
         console.error('Error deleting event:', error);
     }
 }
+
+// Create global calendar instance
+window.calendarInstance = new Calendar();

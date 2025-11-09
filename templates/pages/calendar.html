@@ -94,15 +94,42 @@
             </div>
         </div>
 
-        <!-- Right Column: Daily Events -->
+        <!-- Right Column: Mini Calendar & Events -->
         <div class="space-y-6">
+            <!-- Mini Calendar -->
+            <div class="section-card">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold" style="color: var(--text);">📅 Calendar View</h3>
+                    <span id="miniMonthYear" class="text-xs font-medium px-3 py-1 rounded-full" style="background: var(--primary); color: var(--dark);"></span>
+                </div>
+                
+                <!-- Mini Calendar Grid -->
+                <div>
+                    <!-- Day Headers -->
+                    <div class="grid grid-cols-7 gap-1 mb-2">
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">S</div>
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">M</div>
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">T</div>
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">W</div>
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">T</div>
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">F</div>
+                        <div class="text-center text-xs font-semibold py-1" style="color: var(--text-secondary);">S</div>
+                    </div>
+                    
+                    <!-- Calendar Days -->
+                    <div id="miniCalendarGrid" class="grid grid-cols-7 gap-1">
+                        <!-- Days will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            
             <!-- Today's Events -->
             <div class="section-card" style="position: sticky; top: 20px;">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold" style="color: var(--text);">📋 Today's Events</h3>
                     <span id="todayDate" class="text-sm font-medium px-3 py-1 rounded-full" style="background: var(--primary); color: var(--dark);"></span>
                 </div>
-                <div id="todayEventsList" class="space-y-3 max-h-[400px] overflow-y-auto">
+                <div id="todayEventsList" class="space-y-3 max-h-[300px] overflow-y-auto">
                     <div class="text-center text-gray-500 py-8 text-sm">No events today</div>
                 </div>
             </div>
@@ -113,7 +140,7 @@
                     <h3 class="text-lg font-bold" style="color: var(--text);">🔜 Upcoming</h3>
                     <span id="upcomingCount" class="text-xs font-semibold px-2 py-1 rounded-full" style="background: var(--accent); color: white;">0</span>
                 </div>
-                <div id="eventsList" class="space-y-3 max-h-[300px] overflow-y-auto">
+                <div id="eventsList" class="space-y-3 max-h-[250px] overflow-y-auto">
                     <div class="text-center text-gray-500 py-8 text-sm">No upcoming events</div>
                 </div>
             </div>
