@@ -115,7 +115,7 @@ class Calendar {
         
         // Empty cells for days before month starts
         for (let i = 0; i < firstDay; i++) {
-            html += '<div class="border min-h-[100px]" style="border-color: var(--border); background: var(--bg-tertiary);"></div>';
+            html += '<div class="border-2 min-h-[120px] p-2" style="border-color: #E0E0E0; background: #F9F9F9;"></div>';
         }
         
         // Days of the month
@@ -125,30 +125,35 @@ class Calendar {
             const isToday = date.toDateString() === today.toDateString();
             const dayEvents = this.events[dateStr] || [];
             
+            const cellBg = isToday ? '#E0F2F1' : 'white';
+            const borderColor = isToday ? 'var(--primary)' : '#E0E0E0';
+            const borderWidth = isToday ? 'border-2' : 'border-2';
+            
             const todayStyle = isToday ? 
                 'background: var(--primary); color: var(--dark); font-weight: 700;' : 
-                'color: var(--text);';
+                'background: #F5F5F5; color: var(--text); font-weight: 600;';
             
             html += `
-                <div class="border min-h-[100px] p-2 hover:shadow-md transition-all cursor-pointer"
-                     style="border-color: var(--border); background: var(--bg-secondary);"
+                <div class="${borderWidth} min-h-[120px] p-2 hover:shadow-lg transition-all cursor-pointer"
+                     style="border-color: ${borderColor}; background: ${cellBg};"
                      onclick="selectDate('${dateStr}')">
-                    <div class="text-right mb-1">
-                        <span class="inline-block w-7 h-7 rounded-full text-sm font-semibold flex items-center justify-center"
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded text-sm"
                               style="${todayStyle}">
                             ${day}
                         </span>
+                        ${dayEvents.length > 0 ? `<span class="text-xs font-bold px-1.5 py-0.5 rounded-full" style="background: var(--accent); color: white;">${dayEvents.length}</span>` : ''}
                     </div>
                     <div class="space-y-1">
-                        ${dayEvents.slice(0, 2).map(event => `
-                            <div class="text-xs px-2 py-1 rounded truncate" 
-                                 style="background: var(--accent); color: white;"
+                        ${dayEvents.slice(0, 3).map(event => `
+                            <div class="text-xs px-2 py-1.5 rounded shadow-sm font-medium truncate border-l-2" 
+                                 style="background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%); color: white; border-left-color: var(--primary);"
                                  title="${this.escapeHtml(event.title)}">
-                                ${event.time ? '⏰ ' + event.time + ' ' : ''}${this.escapeHtml(event.title)}
+                                ${event.time ? '<span class="font-bold">⏰ ' + event.time + '</span> ' : ''}${this.escapeHtml(event.title)}
                             </div>
                         `).join('')}
-                        ${dayEvents.length > 2 ? `
-                            <div class="text-xs px-2" style="color: var(--text-secondary);">+${dayEvents.length - 2} more</div>
+                        ${dayEvents.length > 3 ? `
+                            <div class="text-xs px-2 py-1 rounded font-semibold" style="background: var(--primary); color: var(--dark);">+${dayEvents.length - 3} more</div>
                         ` : ''}
                     </div>
                 </div>
