@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User model for session-based identification
+model User {
+  id          String   @id @default(uuid())
+  sessionId   String   @unique @map("session_id")
+  name        String?
+  email       String?
+  bio         String?
+  preferences Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  chatMessages ChatMessage[]
+  quizzes      Quiz[]
+  quizAttempts QuizAttempt[]
+  events       CalendarEvent[]
+  analytics    AnalyticsData[]
+  ragDocuments RagDocument[]
+
+  @@map("users")
+}
+
+// Chat Messages
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String // 'user' or 'assistant'
+  content   String
+  timestamp DateTime @default(now())
+  metadata  Json? // Store capabilities used, etc.
+
+  @@index([userId])
+  @@map("chat_messages")
+}
+
+// Quiz model
+model Quiz {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic      String
+  questions  Json // Store questions as JSON
+  difficulty String
+  source     String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  attempts QuizAttempt[]
+
+  @@index([userId])
+  @@map("quizzes")
+}
+
+// Quiz Attempts
+model QuizAttempt {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId      String   @map("quiz_id")
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score       Float
+  answers     Json // Store user answers
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@index([userId])
+  @@index([quizId])
+  @@map("quiz_attempts")
+}
+
+// Calendar Events
+model CalendarEvent {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  date        DateTime
+  time        String?
+  eventType   String?  @map("event_type") // 'deadline', 'exam', 'study', etc.
+  reminder    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([date])
+  @@map("calendar_events")
+}
+
+// Analytics Data
+model AnalyticsData {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metricType String   @map("metric_type") // 'study_hours', 'quiz_score', 'streak', etc.
+  value      Float
+  metadata   Json? // Additional context
+  date       DateTime
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([date])
+  @@index([metricType])
+  @@map("analytics_data")
+}
+
+// RAG Documents for knowledge base
+model RagDocument {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  fileType  String?  @map("file_type")
+  metadata  Json?
+  embedding Json? // Store vector embeddings
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("rag_documents")
+}
