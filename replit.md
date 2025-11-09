@@ -145,6 +145,7 @@ The chat supports simultaneous multi-modal capabilities:
   - New color palette: Rich Teal (#0D9488), Bright Indigo (#6366F1), Warm Amber (#F59E0B)
   - High-contrast colors for better accessibility and visual appeal
   - Replaced muted pastels with vibrant, energetic colors
+  - Fixed CSS cascade order so modern design system loads last and properly overrides legacy styles
 - **Enhanced Typography**: Bold, modern font system with clear hierarchy
   - Headings use 700-800 font weight for maximum impact
   - Improved font sizes with responsive clamp() for all screen sizes
