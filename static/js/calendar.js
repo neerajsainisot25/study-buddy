@@ -4,6 +4,7 @@ class Calendar {
         this.events = {};
         this.currentDate = new Date();
         this.selectedDate = null;
+        this.currentView = 'calendar';
     }
 
     init() {
@@ -185,7 +186,11 @@ class Calendar {
                 }
             }
             
-            this.renderCalendar();
+            if (this.currentView === 'calendar') {
+                this.renderCalendar();
+            } else {
+                this.renderSchedule();
+            }
             this.loadEventsList();
         } catch (error) {
             console.error('Error loading events:', error);
@@ -360,10 +365,117 @@ class Calendar {
         this.loadEvents();
     }
 
+    renderSchedule() {
+        const container = document.getElementById('scheduleContainer');
+        if (!container) return;
+
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+
+        let html = '';
+        
+        // Group events by day
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = date.toISOString().split('T')[0];
+            const dayEvents = this.events[dateStr] || [];
+            const isToday = date.toDateString() === today.toDateString();
+            
+            if (dayEvents.length === 0 && !isToday && day > today.getDate()) continue;
+            
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+            const dayDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            html += `
+                <div class="border-2 rounded-lg overflow-hidden" style="border-color: ${isToday ? 'var(--primary)' : 'var(--border)'};">
+                    <div class="px-4 py-3 flex justify-between items-center" style="background: ${isToday ? 'var(--primary)' : 'var(--dark)'};">
+                        <div>
+                            <h3 class="font-bold" style="color: ${isToday ? 'var(--dark)' : 'var(--primary)'};">${dayName}</h3>
+                            <p class="text-sm" style="color: ${isToday ? 'var(--dark)' : 'var(--light)'};">${dayDate}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-bold" style="background: var(--accent); color: white;">${dayEvents.length} events</span>
+                    </div>
+                    <div class="p-4 space-y-3" style="background: var(--bg-secondary);">
+                        ${dayEvents.length === 0 ? `
+                            <p class="text-center text-sm py-4" style="color: var(--text-secondary);">No events scheduled</p>
+                        ` : dayEvents.map(event => `
+                            <div class="p-3 rounded-lg border-l-4 shadow-sm hover:shadow-md transition-all" 
+                                 style="background: white; border-left-color: var(--accent);">
+                                <div class="flex justify-between items-start gap-3">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            ${event.time ? `<span class="px-2 py-1 rounded text-xs font-bold" style="background: var(--primary); color: var(--dark);">⏰ ${event.time}</span>` : ''}
+                                        </div>
+                                        <h4 class="font-bold text-base mb-1" style="color: var(--text);">${this.escapeHtml(event.title)}</h4>
+                                        ${event.description ? `<p class="text-sm" style="color: var(--text-secondary);">${this.escapeHtml(event.description)}</p>` : ''}
+                                    </div>
+                                    <button onclick="deleteEventFromList('${dateStr}', '${event.id || 0}')" 
+                                        class="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-50 transition-colors">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (html === '') {
+            html = '<div class="text-center py-12"><p class="text-lg" style="color: var(--text-secondary);">No events scheduled this month</p></div>';
+        }
+        
+        container.innerHTML = html;
+    }
+
+    switchView(view) {
+        this.currentView = view;
+        
+        const calendarView = document.getElementById('calendarView');
+        const scheduleView = document.getElementById('scheduleView');
+        const calendarBtn = document.getElementById('calendarViewBtn');
+        const scheduleBtn = document.getElementById('scheduleViewBtn');
+        
+        if (view === 'calendar') {
+            if (calendarView) calendarView.style.display = 'block';
+            if (scheduleView) scheduleView.style.display = 'none';
+            if (calendarBtn) {
+                calendarBtn.style.background = 'var(--primary)';
+                calendarBtn.style.color = 'var(--dark)';
+            }
+            if (scheduleBtn) {
+                scheduleBtn.style.background = 'transparent';
+                scheduleBtn.style.color = 'var(--primary)';
+            }
+            this.renderCalendar();
+        } else if (view === 'schedule') {
+            if (calendarView) calendarView.style.display = 'none';
+            if (scheduleView) scheduleView.style.display = 'block';
+            if (scheduleBtn) {
+                scheduleBtn.style.background = 'var(--primary)';
+                scheduleBtn.style.color = 'var(--dark)';
+            }
+            if (calendarBtn) {
+                calendarBtn.style.background = 'transparent';
+                calendarBtn.style.color = 'var(--primary)';
+            }
+            this.renderSchedule();
+        }
+    }
+
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+}
+
+// Global function for view switching
+function switchCalendarView(view) {
+    if (window.calendarInstance) {
+        window.calendarInstance.switchView(view);
     }
 }
 

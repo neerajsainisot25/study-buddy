@@ -140,29 +140,34 @@ The chat supports simultaneous multi-modal capabilities:
 
 ## Recent Changes
 
-**November 9, 2025 - Calendar UI Redesign & Full Integration**
-- Redesigned calendar page with single unified monthly calendar view
-- Removed duplicate mini calendar for cleaner, more focused interface
-- Implemented clear grid and block design:
+**November 9, 2025 - Dynamic Calendar with Schedule View**
+- Implemented dual-view calendar system with toggle between Calendar and Schedule views
+- **Calendar View (Grid):**
   - Prominent 2px grid borders for clear date separation
   - Block-style event display with gradient backgrounds
   - Event count badges on dates with scheduled events
   - Increased cell height (120px) for better event visibility
   - Shadow effects on hover for interactivity
-- Calendar layout now features:
-  - Large main calendar grid showing all days and events
+  - Shows up to 3 events per day with "+X more" indicator
+- **Schedule View (Timeline):**
+  - Chronological list of all events organized by day
+  - Full event details with time slots visible
+  - Today's schedule highlighted with teal accent
+  - Each day shows event count and full descriptions
+  - Easy-to-scan timeline format for planning
+- Dynamic view switching with instant updates
+- Calendar layout features:
+  - View toggle buttons (Calendar/Schedule) in header
   - Right sidebar with Add Event form, Today's Events, and Upcoming Events
   - Streamlined event management in one view
 - Visual improvements:
   - Today highlighted with teal background and border
   - Event blocks with gradient design and left accent border
-  - Shows up to 3 events per day with "+X more" indicator
   - Day numbers displayed as rounded blocks
-- Fixed calendar rendering issue: removed non-existent authentication checks
-- Fixed JavaScript syntax error in loadEvents() function (missing closing brace)
+- Fixed all JavaScript syntax errors and cleaned up codebase
 - All calendar navigation buttons working (Previous, Next, Today, AI Suggest)
-- Full PostgreSQL backend integration for events
-- Calendar fully connected to database with real-time event loading
+- Full PostgreSQL backend integration with real-time updates
+- Calendar dynamically loads events from database
 
 **November 9, 2025 - Real-Time Dashboard Analytics**
 - Completed PostgreSQL database integration across all features

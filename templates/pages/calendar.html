@@ -7,6 +7,17 @@
                 <p class="text-sm mt-1" style="color: var(--light);">Manage your events and deadlines</p>
             </div>
             <div class="flex gap-2">
+                <!-- View Toggle -->
+                <div class="flex gap-1 px-1 py-1 rounded-lg" style="background: rgba(0,0,0,0.2);">
+                    <button id="calendarViewBtn" onclick="switchCalendarView('calendar')" class="px-3 py-1.5 rounded text-sm font-medium transition-all" style="background: var(--primary); color: var(--dark);">
+                        📅 Calendar
+                    </button>
+                    <button id="scheduleViewBtn" onclick="switchCalendarView('schedule')" class="px-3 py-1.5 rounded text-sm font-medium transition-all" style="background: transparent; color: var(--primary);">
+                        📋 Schedule
+                    </button>
+                </div>
+                
+                <!-- Navigation -->
                 <button onclick="previousMonth()" class="px-4 py-2 rounded-lg transition-colors font-medium" style="background: var(--primary); color: var(--dark);">
                     ← Prev
                 </button>
@@ -25,21 +36,31 @@
 
     <!-- Main Layout: Single Calendar + Event Management -->
     <div style="display: grid; grid-template-columns: 1fr 380px; gap: 24px;">
-        <!-- Left Column: Main Calendar -->
-        <div class="section-card">
-            <div class="bg-white rounded-lg border overflow-hidden" style="border-color: var(--border);">
-                <!-- Day Headers -->
-                <div class="grid grid-cols-7 border-b" style="background: var(--dark); border-color: var(--border);">
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Sun</div>
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Mon</div>
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Tue</div>
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Wed</div>
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Thu</div>
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Fri</div>
-                    <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Sat</div>
+        <!-- Left Column: Calendar/Schedule View -->
+        <div>
+            <!-- Calendar View -->
+            <div id="calendarView" class="section-card">
+                <div class="bg-white rounded-lg border overflow-hidden" style="border-color: var(--border);">
+                    <!-- Day Headers -->
+                    <div class="grid grid-cols-7 border-b" style="background: var(--dark); border-color: var(--border);">
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Sun</div>
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Mon</div>
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Tue</div>
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Wed</div>
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Thu</div>
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Fri</div>
+                        <div class="px-2 py-3 text-center text-sm font-semibold" style="color: var(--primary);">Sat</div>
+                    </div>
+                    <div id="calendarGrid" class="grid grid-cols-7">
+                        <!-- Calendar days will be inserted here -->
+                    </div>
                 </div>
-                <div id="calendarGrid" class="grid grid-cols-7">
-                    <!-- Calendar days will be inserted here -->
+            </div>
+            
+            <!-- Schedule View (Hidden by default) -->
+            <div id="scheduleView" class="section-card" style="display: none;">
+                <div class="space-y-4" id="scheduleContainer">
+                    <!-- Schedule will be inserted here -->
                 </div>
             </div>
         </div>
