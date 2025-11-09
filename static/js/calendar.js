@@ -173,15 +173,24 @@ class Calendar {
             
             this.events = {};
             
+            // Use Promise.all for parallel loading - much faster!
+            const promises = [];
+            const dateStrings = [];
+            
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(year, month, day);
                 const dateStr = date.toISOString().split('T')[0];
-                
-                const response = await fetch(`/api/calendar/events?date=${dateStr}`);
-                if (response.ok) {
-                    const data = await response.json();
+                dateStrings.push(dateStr);
+                promises.push(fetch(`/api/calendar/events?date=${dateStr}`));
+            }
+            
+            const responses = await Promise.all(promises);
+            
+            for (let i = 0; i < responses.length; i++) {
+                if (responses[i].ok) {
+                    const data = await responses[i].json();
                     if (data.events && data.events.length > 0) {
-                        this.events[dateStr] = data.events;
+                        this.events[dateStrings[i]] = data.events;
                     }
                 }
             }
