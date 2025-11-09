@@ -2,7 +2,12 @@
 from flask import Blueprint, request, jsonify, session as flask_session
 from app.services.llm_service import LLMService
 from app.services.storage import storage
+from app.services.database import db_service, CalendarEvent
+from sqlalchemy.exc import SQLAlchemyError
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 calendar_bp = Blueprint('calendar', __name__)
 
@@ -88,24 +93,56 @@ def get_upcoming_events():
     try:
         from datetime import datetime, timedelta
         
-        all_events = storage._memory_storage.get('events', {})
+        session_id = get_session_id()
         upcoming = []
         today = datetime.now().date()
         week_end = today + timedelta(days=7)
         
-        for date_str, events in all_events.items():
+        # Try database first
+        if db_service.is_available():
+            db_session = None
             try:
-                event_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-                if today <= event_date <= week_end:
-                    for event in events:
-                        upcoming.append({
-                            "date": date_str,
-                            "title": event.get('title', ''),
-                            "description": event.get('description', ''),
-                            "time": event.get('time', '')
-                        })
-            except ValueError:
-                continue
+                db_session = db_service.get_session()
+                
+                # Query events for the next 7 days
+                events = db_session.query(CalendarEvent).filter(
+                    CalendarEvent.session_id == session_id
+                ).all()
+                
+                for event in events:
+                    try:
+                        event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
+                        if today <= event_date <= week_end:
+                            upcoming.append({
+                                "date": event.date,
+                                "title": event.title,
+                                "description": event.description or '',
+                                "time": event.time or ''
+                            })
+                    except ValueError:
+                        continue
+            except SQLAlchemyError as e:
+                logger.error(f"Database error in get_upcoming_events: {e}")
+            finally:
+                if db_session:
+                    db_service.close_session(db_session)
+        
+        # Fallback to memory storage
+        if not upcoming and hasattr(storage, '_memory_storage'):
+            all_events = storage._memory_storage.get('events', {})
+            for date_str, events in all_events.items():
+                try:
+                    event_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                    if today <= event_date <= week_end:
+                        for event in events:
+                            upcoming.append({
+                                "date": date_str,
+                                "title": event.get('title', ''),
+                                "description": event.get('description', ''),
+                                "time": event.get('time', '')
+                            })
+                except ValueError:
+                    continue
         
         # Sort by date
         upcoming.sort(key=lambda x: x['date'])
@@ -116,5 +153,6 @@ def get_upcoming_events():
             "next_event": upcoming[0] if upcoming else None
         })
     except Exception as e:
+        logger.error(f"Error in get_upcoming_events: {e}")
         return jsonify({"error": str(e)}), 500
 

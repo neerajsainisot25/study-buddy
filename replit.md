@@ -2,9 +2,9 @@
 
 ## Overview
 
-StudyMate is a standalone Flask-based web application designed to enhance academic learning through AI-powered features. The application provides students with an intelligent chatbot for questions, quiz generation capabilities, calendar management for events and deadlines, and analytics tracking for study progress. The system leverages OpenRouter's free LLM models, supports RAG (Retrieval-Augmented Generation) for knowledge base queries, web search integration, and advanced reasoning capabilities.
+StudyMate is a Flask-based web application designed to enhance academic learning through AI-powered features. The application provides students with an intelligent chatbot for questions, quiz generation capabilities, calendar management for events and deadlines, and analytics tracking for study progress. The system leverages OpenRouter's free LLM models, supports RAG (Retrieval-Augmented Generation) for knowledge base queries, web search integration, and advanced reasoning capabilities.
 
-The application uses a modern single-page application (SPA) architecture with component-based frontend design and in-memory storage (no database or authentication required).
+The application uses a modern single-page application (SPA) architecture with component-based frontend design and PostgreSQL database for persistent storage with session-based user identification.
 
 ## User Preferences
 
@@ -37,7 +37,18 @@ A custom "Focused Horizon" nature-inspired color palette is implemented with Dee
 - `app/config.py`: Centralized configuration management
 
 **Storage Strategy:**
-In-memory storage only. No database or authentication required.
+PostgreSQL database (Replit built-in Neon) for persistent storage with session-based user identification. All features (chat, quiz, calendar, profile, analytics) store data in the database with automatic fallback to in-memory storage when database is unavailable.
+
+**Database Models:**
+- `User`: User profiles with name, email, bio, and study preferences
+- `ChatMessage`: Conversation history by session
+- `Quiz`: Generated quizzes with questions and metadata
+- `QuizAttempt`: Quiz results and performance tracking
+- `CalendarEvent`: Events, deadlines, and study sessions
+- `AnalyticsData`: Study metrics and progress data
+
+**Session Management:**
+Flask sessions automatically assign a unique session_id to each user, enabling personalized data storage without explicit authentication.
 
 ### LLM Integration
 
@@ -102,6 +113,14 @@ The chat supports simultaneous multi-modal capabilities:
 - Word Documents: `python-docx` (>=1.1.0)
 - HTML: `beautifulsoup4` (4.12.2)
 
+### Database
+
+**PostgreSQL**
+- Replit built-in Neon PostgreSQL database
+- SQLAlchemy ORM (>=2.0.0)
+- Connection pooling with scoped sessions
+- Automatic migration support
+
 ### Supporting Libraries
 
 - `flask-cors` (4.0.0): CORS handling
@@ -112,8 +131,19 @@ The chat supports simultaneous multi-modal capabilities:
 
 **Required Environment Variables:**
 - `OPENROUTER_API_KEY`: API key for LLM access
+- `DATABASE_URL`: PostgreSQL connection string (auto-configured by Replit)
 
 **Optional Configuration:**
 - `LLM_URL`: Custom LLM endpoint
 - `FLASK_DEBUG`: Debug mode toggle
 - `PORT`: Server port (default: 5000)
+
+## Recent Changes
+
+**November 9, 2025 - PostgreSQL Database Integration**
+- Migrated from in-memory storage to PostgreSQL database
+- Implemented session-based user identification using Flask sessions
+- Created comprehensive database schema with SQLAlchemy models
+- Updated all routes (chat, quiz, calendar, profile) to use database with memory fallback
+- Fixed reserved keyword issue (metadata → meta_data)
+- All features now persist data across sessions
