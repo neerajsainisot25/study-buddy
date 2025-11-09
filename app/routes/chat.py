@@ -1,6 +1,7 @@
 """Chat routes blueprint"""
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session as flask_session
 import re
+import uuid
 from app.services.llm_service import LLMService
 from app.services.storage import storage
 from app.services.web_search import WebSearchService
@@ -16,6 +17,12 @@ def ensure_rag_initialized():
     if not _rag_initialized:
         _rag_initialized = initialize_rag()
 
+def get_session_id():
+    """Get or create session ID"""
+    if 'session_id' not in flask_session:
+        flask_session['session_id'] = str(uuid.uuid4())
+    return flask_session['session_id']
+
 @chat_bp.route('', methods=['POST'])
 def handle_chat():
     """Handle chat queries with multiple simultaneous capabilities"""
@@ -23,7 +30,7 @@ def handle_chat():
     
     data = request.json or {}
     query = data.get('question', '').strip()
-    session_id = data.get('session_id', 'default')
+    session_id = get_session_id()
     
     # Get capability flags (default to RAG only if none specified)
     use_rag = data.get('use_rag', True)
@@ -179,8 +186,7 @@ def handle_chat():
 @chat_bp.route('/clear', methods=['POST'])
 def clear_chat_history():
     """Clear conversation history for a session"""
-    data = request.json or {}
-    session_id = data.get('session_id', 'default')
+    session_id = get_session_id()
     storage.clear_conversation(session_id)
     return jsonify({"status": "cleared"})
 
