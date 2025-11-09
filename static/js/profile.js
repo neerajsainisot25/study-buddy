@@ -5,16 +5,6 @@ class Profile {
 
     init() {
         this.loadProfile();
-        this.setupEventListeners();
-    }
-
-    setupEventListeners() {
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        if (darkModeToggle) {
-            darkModeToggle.addEventListener('change', (e) => {
-                this.toggleDarkMode(e.target.checked);
-            });
-        }
     }
 
     async loadProfile() {
@@ -94,14 +84,6 @@ class Profile {
         } catch (error) {
             console.error('Error saving profile:', error);
             alert('Error saving profile');
-        }
-    }
-
-    toggleDarkMode(enabled) {
-        if (enabled) {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
         }
     }
 
