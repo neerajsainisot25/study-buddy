@@ -22,3 +22,8 @@ class Config:
     # Storage Configuration
     STORAGE_TYPE = os.getenv('STORAGE_TYPE', 'memory')
     STORAGE_FILE = os.getenv('STORAGE_FILE', 'data/storage.json')
+    
+    # Supabase Database Configuration
+    SUPABASE_PASSWORD = os.getenv('SUPABASE_PASSWORD', '')
+    DATABASE_URL = f"postgresql://postgres.wjtyfgibnylvlgeusrxf:{SUPABASE_PASSWORD}@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
+    DIRECT_URL = f"postgresql://postgres.wjtyfgibnylvlgeusrxf:{SUPABASE_PASSWORD}@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres"
