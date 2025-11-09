@@ -140,6 +140,23 @@ The chat supports simultaneous multi-modal capabilities:
 
 ## Recent Changes
 
+**November 9, 2025 - Loading Animations & User Experience Enhancement**
+- **Chat Loading Animation**: Added smooth typing indicator with animated dots when AI is responding
+  - Three bouncing dots with teal color matching theme
+  - Shows automatically during API calls
+- **General Loading Components**: Created reusable loading system for all features
+  - Loading spinner with brand colors (teal accent)
+  - Loading overlays for calendar event loading
+  - Skeleton loading for content placeholders
+  - Button loading states with inline spinners
+- **Calendar Loading**: Added loading overlay when fetching events from database
+  - Shows "Loading events..." message with spinner
+  - Improves perceived performance during parallel event loading
+- **Quiz Loading**: Enhanced existing loading screen with proper styling
+  - Professional loading state with spinner and messages
+  - "Analyzing Topic & Drafting Questions..." feedback
+- **Performance**: All loading animations use CSS animations (GPU-accelerated, smooth 60fps)
+
 **November 9, 2025 - Comprehensive App Improvements & Code Audit**
 - **Logo Enhancement**: Redesigned StudyMate logo with modern gradient text, floating SVG icon, and "Learn Smarter" tagline
   - Gradient text effect: "Study" in teal gradient, "Mate" in peach gradient

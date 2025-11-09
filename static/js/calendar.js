@@ -166,6 +166,12 @@ class Calendar {
     }
 
     async loadEvents() {
+        const grid = document.getElementById('calendarGrid');
+        if (!grid) return;
+        
+        // Show loading overlay
+        this.showLoadingOverlay(grid, 'Loading events...');
+        
         try {
             const year = this.currentDate.getFullYear();
             const month = this.currentDate.getMonth();
@@ -203,6 +209,30 @@ class Calendar {
             this.loadEventsList();
         } catch (error) {
             console.error('Error loading events:', error);
+        } finally {
+            // Remove loading overlay
+            this.hideLoadingOverlay(grid);
+        }
+    }
+    
+    showLoadingOverlay(container, text = 'Loading...') {
+        const existingOverlay = container.querySelector('.loading-overlay');
+        if (existingOverlay) return;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = `
+            <div class="loading-spinner"></div>
+            <div class="loading-text">${text}</div>
+        `;
+        container.style.position = 'relative';
+        container.appendChild(overlay);
+    }
+    
+    hideLoadingOverlay(container) {
+        const overlay = container.querySelector('.loading-overlay');
+        if (overlay) {
+            overlay.remove();
         }
     }
 
