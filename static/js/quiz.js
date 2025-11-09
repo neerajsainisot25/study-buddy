@@ -98,6 +98,7 @@ class Quiz {
             this.setupSection.classList.remove('hidden');
             this.setupSection.style.display = 'block';
         }
+        this.showHistoryColumn();
     }
 
     showLoading() {
@@ -106,6 +107,7 @@ class Quiz {
             this.loadingSection.classList.remove('hidden');
             this.loadingSection.style.display = 'block';
         }
+        this.showHistoryColumn();
     }
 
     showPreview() {
@@ -115,6 +117,7 @@ class Quiz {
             this.previewSection.style.display = 'block';
             this.displayPreview();
         }
+        this.showHistoryColumn();
     }
 
     showQuiz() {
@@ -123,6 +126,7 @@ class Quiz {
             this.quizSection.classList.remove('hidden');
             this.quizSection.style.display = 'block';
         }
+        this.hideHistoryColumn();
         this.startTimer();
         this.updateNavigation();
     }
@@ -133,7 +137,22 @@ class Quiz {
             this.resultsSection.classList.remove('hidden');
             this.resultsSection.style.display = 'block';
         }
+        this.showHistoryColumn();
         this.stopTimer();
+    }
+
+    hideHistoryColumn() {
+        const historyColumn = document.getElementById('quizHistoryColumn');
+        if (historyColumn) {
+            historyColumn.style.display = 'none';
+        }
+    }
+
+    showHistoryColumn() {
+        const historyColumn = document.getElementById('quizHistoryColumn');
+        if (historyColumn) {
+            historyColumn.style.display = 'block';
+        }
     }
 
     hideAll() {
