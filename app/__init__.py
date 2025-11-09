@@ -73,4 +73,13 @@ def create_app(config_class=Config):
         root_dir = os.path.dirname(os.path.dirname(__file__))
         return send_from_directory(root_dir, 'index.html')
 
+    # Add cache control headers to prevent browser caching during development
+    @app.after_request
+    def add_cache_control(response):
+        """Add cache control headers to disable caching"""
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+
     return app
